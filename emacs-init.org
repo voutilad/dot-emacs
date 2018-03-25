@@ -1,0 +1,14 @@
+#+TITLE: Emacs Initialization File
+#+AUTHOR: Dave Voutila
+#+EMAIL: voutilad@gmail.com
+
+* Bootstrapping Emacs
+  Chances are, =init.el= called this file and is evaluating the source blocks
+  outside of actual =Org mode=. Since this file is a springboard to others, our
+  first objective is to bootstrap =Org mode=.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (message ">>> org-mode loaded.")
+#+END_SRC
+
+
