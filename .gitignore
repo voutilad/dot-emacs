@@ -1,4 +1,6 @@
 auto-save-list/
+.autosave/
+.backups/
 *.el
 !init.el
 eshell/

@@ -2,13 +2,83 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
-* Bootstrapping Emacs
-  Chances are, =init.el= called this file and is evaluating the source blocks
-  outside of actual =Org mode=. Since this file is a springboard to others, our
-  first objective is to bootstrap =Org mode=.
+* Introduction
+  This file is the entry point for bootstrapping my Emacs system. My
+  general approach is to do some general system tweaks before loading
+  packages.
 
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (message ">>> org-mode loaded.")
-#+END_SRC
+  I plan on following these conventions:
 
+  - *Many, smaller config files* instead of a monolithic file
+    3rd-party packages should have their customizations isolated and
+    easy to find.
+    
+  - *One config, multiple systems*
+    I currently split time between /macOS/ (desktop) and /OpenBSD/
+    (laptop) and need a coherent experience between both ecosystems.
+    
+  - *Less is more*
+    Only include stuff I actually use.
 
+* System Tuning
+  First, before we load any packages (other than =org-mode= obviously)
+  I want to tune a few global settings.
+
+** File and Buffer Handling
+   Nothing is more annoying than some of the default Emacs behavior
+   around temp files and history stuff.
+   
+*** File Backups
+    Emacs can create backups of files upon save. I think this could be
+    useful, so let's turn it on. First, we should make sure the files
+    go into a dedicated directory so they don't clutter things.
+
+    See http://whattheemacsd.com/init.el-02.html for more info.
+
+    #+BEGIN_SRC emacs-lisp
+      (defconst my/backup-dir
+	(expand-file-name ".backups" user-emacs-directory))
+
+      (when (not (file-exists-p my/backup-dir))
+	(message ">>> Making backup directory")
+	(make-directory my/backup-dir))
+
+      ;; Write backup files to own directory
+      (setq backup-directory-alist `((".*" . ,my/backup-dir)))
+
+      ;; Make backups of files, even when they're in version control
+      (setq vc-make-backup-files t)
+
+      ;; Enable Auto-backups
+      (setq make-backup-files t)
+    #+END_SRC
+
+*** Auto-Save
+    By far a butt-saver, Emacs has built in auto-save
+    capabilities. Like [[File Backups]], we want to make sure the files go
+    in a sane place as to not clutter things. By default, this tends
+    to be =/tmp= (via =temporary-file-directory=), but on OpenBSD this
+    gets auto-purged at startup. If we have a panic or system failure,
+    I don't want to lose the autosave!
+
+    For reference, see the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Save.html][Auto-Save documentation]].
+
+    #+BEGIN_SRC emacs-lisp
+      (defconst my/autosave-dir
+	(expand-file-name ".autosave/" user-emacs-directory))
+
+      (when (not (file-exists-p my/autosave-dir))
+	(message ">>> Creating autosave directory")
+	(make-directory my/autosave-dir))
+
+      (setq auto-save-file-name-transforms
+	    `((".*" ,my/autosave-dir t)))
+
+      ;; this defaults to true, but let's be explicit
+      (setq auto-save-default t)
+    #+END_SRC
+    
+
+*** 
+*** 
+** Performance Tweaks
