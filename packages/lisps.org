@@ -1,0 +1,19 @@
+#+TITLE: General LISP Configuration
+#+AUTHOR: Dave Voutila
+#+EMAIL: voutilad@gmail.com
+
+* Wrangling Parentheses
+
+** ParEdit
+   Because your parentheses should stay in balance lest the world burn!
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package paredit
+       :ensure t
+       :diminish "﹙﹚"
+       :init
+       (dolist (mode (list 'emacs-lisp-mode-hook
+			   'lisp-interaction-mode-hook
+			   'eval-expression-minibuffer-setup-hook))
+	 (add-hook mode 'enable-paredit-mode)))
+   #+END_SRC

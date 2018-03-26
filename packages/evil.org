@@ -1,0 +1,36 @@
+#+TITLE: Evil Mode
+#+AUTHOR: Dave Voutila
+#+EMAIL: voutilad@gmail.com
+#+STARTUP: inlineimages
+
+* Initialization
+  Let's do some evil...
+
+  Initial config (for the mode handling) borrowed from Howard Abrams
+  config.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package evil
+      :ensure t
+      :config
+      (evil-mode 1)
+
+      ;; Let's not bother with Evil in *every* mode...
+      (dolist (mode '(ag-mode
+		      flycheck-error-list-mode
+		      git-rebase-mode))
+	(add-to-list 'evil-emacs-state-modes mode)))
+  #+END_SRC
+
+* "The Goggles do nothing!"
+
+  #+CAPTION: "My eyes! The goggles do nothing!"
+  #+NAME: fig:goggles
+  [[./goggles.jpg]]
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package evil-goggles
+      :ensure t
+      :config
+      (evil-goggles-mode))
+  #+END_SRC

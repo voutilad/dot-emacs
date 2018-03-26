@@ -2,6 +2,8 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
+Welcome to my Emacs config!
+
 * Introduction
   This file is the entry point for bootstrapping my Emacs system. My
   general approach is to do some general system tweaks before loading
@@ -9,14 +11,20 @@
 
   I plan on following these conventions:
 
+  - *Emacs 25+*
+    Decisions are being made based on native functionality in Emacs
+    v25 or greater. Right now, the only core package this config
+    replaces is =Org= with the latest version since it releases more
+    frequently than core Emacs.
+
   - *Many, smaller config files* instead of a monolithic file
     3rd-party packages should have their customizations isolated and
     easy to find.
-    
+
   - *One config, multiple systems*
     I currently split time between /macOS/ (desktop) and /OpenBSD/
     (laptop) and need a coherent experience between both ecosystems.
-    
+
   - *Less is more*
     Only include stuff I actually use.
 
@@ -27,7 +35,7 @@
 ** File and Buffer Handling
    Nothing is more annoying than some of the default Emacs behavior
    around temp files and history stuff.
-   
+
 *** File Backups
     Emacs can create backups of files upon save. I think this could be
     useful, so let's turn it on. First, we should make sure the files
@@ -37,11 +45,11 @@
 
     #+BEGIN_SRC emacs-lisp
       (defconst my/backup-dir
-	(expand-file-name ".backups" user-emacs-directory))
+        (expand-file-name ".backups" user-emacs-directory))
 
       (when (not (file-exists-p my/backup-dir))
-	(message ">>> Making backup directory")
-	(make-directory my/backup-dir))
+        (my/log "Making backup directory")
+        (make-directory my/backup-dir))
 
       ;; Write backup files to own directory
       (setq backup-directory-alist `((".*" . ,my/backup-dir)))
@@ -51,6 +59,9 @@
 
       ;; Enable Auto-backups
       (setq make-backup-files t)
+
+      ;; To be safe, make Tramp backup to our target, too
+      (setq tramp-backup-directory-alist backup-directory-alist)
     #+END_SRC
 
 *** Auto-Save
@@ -68,7 +79,7 @@
 	(expand-file-name ".autosave/" user-emacs-directory))
 
       (when (not (file-exists-p my/autosave-dir))
-	(message ">>> Creating autosave directory")
+	(my/log "Creating autosave directory")
 	(make-directory my/autosave-dir))
 
       (setq auto-save-file-name-transforms
@@ -77,8 +88,264 @@
       ;; this defaults to true, but let's be explicit
       (setq auto-save-default t)
     #+END_SRC
-    
 
-*** 
-*** 
+*** Customization File
+    If we make any tweaks via the Emacs menu system, put them in a
+    specific file.
+
+    #+BEGIN_SRC emacs-lisp
+      ;; See Howard Abrams's example for this snippet
+      (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+      (when (file-exists-p custom-file)
+	(load custom-file))
+    #+END_SRC
+
+*** On-Save Hooks
+    The only on-save hook I want for now is cleaning up whitespace
+    because holy hell does that annoy me (and all the automated code
+    quality checkers).
+
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'before-save-hook 'delete-trailing-whitespace)
+    #+END_SRC
+
 ** Performance Tweaks
+   These tweaks are debatable. Reading the docs, it's not clear if
+   this helps or hurts in general. For now let's play around because
+   if one Emacs user jumps off a garbage collection bridge, you
+   should, too.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq gc-cons-threshold 8000000)
+
+     ;; See https://github.com/wasamasa/dotemacs/blob/master/init.org#gnutls
+     (setq gnutls-min-prime-bits 4096)
+   #+END_SRC
+
+** Package System
+   Now we configure the settings for the package system. Let's prefer
+   the bleeding edge stuff.
+
+   #+BEGIN_SRC emacs-lisp
+     (require 'package)
+
+     (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+			      ("melpa" . "http://melpa.org/packages/")))
+     (package-initialize)
+     (package-refresh-contents)
+   #+END_SRC
+
+*** Use-Package
+    I've never really tried this, but borrowing from [[https://github.com/howardabrams/dot-files/blob/master/emacs.org#use-package][Howard Abrams'
+    example]] let's make sure we install it before jumping to other
+    files.
+
+    #+BEGIN_SRC emacs-lisp
+      (unless (package-installed-p 'use-package)
+	(package-refresh-contents)
+	(package-install 'use-package))
+
+      (require 'use-package)
+    #+END_SRC
+
+* User Interface
+  Pretty important to like what you're staring at all day.
+
+** Fonts
+   One of the things I change the most is the font. However, for now,
+   let's just leave it the default.
+
+** Themes
+   The default theme isn't too horrible, honestly, but I do prefer
+   something other than a white background.
+
+   Let's try out the super popular [[https://github.com/bbatsov/solarized-emacs][solarized-emacs]] theme with some
+   slight tuning.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package solarized-theme
+       :ensure t
+       :config
+       (setq x-underline-at-descent-line t))
+
+     ;; some options available:
+     ;; make the fringe stand out from the background
+     ;(setq solarized-distinct-fringe-background t)
+
+     ;; Don't change the font for some headings and titles
+     ;(setq solarized-use-variable-pitch nil)
+
+     ;; make the modeline high contrast
+     ;(setq solarized-high-contrast-mode-line t)
+
+     ;; Use less bolding
+     ;(setq solarized-use-less-bold t)
+
+     ;; Use more italics
+     ;(setq solarized-use-more-italic t)
+
+     ;; Use less colors for indicators such as git:gutter, flycheck and similar
+     ;(setq solarized-emphasize-indicators nil)
+
+     ;; Don't change size of org-mode headlines (but keep other size-changes)
+     ;;(setq solarized-scale-org-headlines nil)
+
+     (load-theme 'solarized-dark t)
+   #+END_SRC
+
+** User Inteface
+   Now we tune some of the stuff we see and interact with in the UI.
+
+*** Spaces, not Tabs!
+    Don't get me started...
+
+    #+BEGIN_SRC emacs-lisp
+      (setq-default indent-tabs-mode nil)
+      (setq tab-width 2)
+    #+END_SRC
+
+*** No bars or bells!
+   Turn off stuff we don't need.
+
+   #+BEGIN_SRC emacs-lisp
+     ;; more real estate please
+     (menu-bar-mode -1)
+     (tool-bar-mode -1)
+     (scroll-bar-mode -1)
+
+     ;; no audio bells please
+     (setq visible-bell t)
+   #+END_SRC
+
+*** Smart Mode Line
+    Let's give [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] a shot.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package smart-mode-line
+        :ensure t
+        :config
+        (sml/setup))
+    #+END_SRC
+
+*** Whitespace
+    Try out whitespace mode. Borrowed from Howard Abrams. It does what
+    you'd expect: highlights whitespace and hidden characters. Great
+    for sniping rogue tabs!
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package whitespace
+        :ensure t
+        :bind ("C-c T w" . whitespace-mode)
+        :init
+        (setq whitespace-line-column nil
+              whitespace-display-mappings '((space-mark 32 [183] [46])
+                                            (newline-mark 10 [9166 10])
+                                            (tab-mark 9 [9654 9] [92 9])))
+        :config
+        (set-face-attribute 'whitespace-space       nil :foreground "#666666" :background nil)
+        (set-face-attribute 'whitespace-newline     nil :foreground "#666666" :background nil)
+        (set-face-attribute 'whitespace-indentation nil :foreground "#666666" :background nil)
+        :diminish whitespace-mode)
+    #+END_SRC
+
+*** "I just can't quit you..."
+    Or at least I think that's how it goes.
+
+    Make sure we don't accidentally quit emacs since while it can take
+    time to startup, it sure takes no time at all to kill itself if
+    you =C-x C-c= accidentally.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq confirm-kill-emacs 'yes-or-no-p)
+    #+END_SRC
+
+* Package Configuration
+  In general, I'm following the convention of auto-loading
+  configuration files discovered in key subdirectories. Basically any
+  language-specific configs will be in their own /.org/ file.
+
+  For all non-OS specific configs, they'll reside under
+  =./packages=. For OS-specific configs, they'll be in something like
+  =.<osname>=.
+
+** Global Utilities
+   These are packages that are either general purpose, global tools or
+   basically minor modes used by language-specific major modes.
+
+*** Company Mode
+    I'm sure I've had this installed and configured in other setups
+    and never figured out how to tune it!
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package company
+        :ensure t
+        :init
+        (setq company-dabbrev-ignore-case t
+              company-show-numbers t)
+        (add-hook 'after-init-hook 'global-company-mode)
+        :config
+        (add-to-list 'company-backends 'company-math-symbols-unicode)
+        :bind ("C-;" . company-complete)
+        :diminish company-mode)
+    #+END_SRC
+
+*** FlyCheck
+    Ubiquitous syntax and sanity checker.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package flycheck
+        :ensure t
+        :init
+        (add-hook 'after-init-hook 'global-flycheck-mode)
+        :config
+        (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+    #+END_SRC
+
+*** Undo-Tree
+    While this often confuses me in how it generates its "tree", it's
+    a life saver at times.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package undo-tree
+        :ensure t
+        :diminish undo-tree-mode
+        :init
+        (global-undo-tree-mode 1)
+        :config
+        (defalias 'redo 'undo-tree-redo)
+        :bind (("C-z" . undo)     ; Zap to character isn't helpful
+               ("C-S-z" . redo)))
+    #+END_SRC
+
+** Specific Package Configurations
+   Let's execute each file.
+
+   #+BEGIN_SRC emacs-lisp
+     ;; just in case
+     (require 'ob-tangle)
+
+     (let* ((path (expand-file-name "packages/" user-emacs-directory))
+	    (files (directory-files path t ".*\.org")))
+       (dolist (file files)
+	 (progn
+	   (my/log (concat "Loading config file " file))
+	   (org-babel-load-file file))))
+   #+END_SRC
+
+** TODO Operating System Specific
+   Now the OS-specific stuff...
+
+   #+BEGIN_SRC emacs-lisp
+     (my/log "TODO: Finish OS-specific stuff!!")
+   #+END_SRC
+
+* Acknowledgements
+  Like almost every Emacs config in existance, this one borrows
+  heavily from a few key players.
+
+** Howard Abrams
+   So well *org*-anized: https://github.com/howardabrams/dot-files/
+
+** Daniel Higganbotham
+   His excelent book [[https://www.braveclojure.com/][Clojure for the Brave and True]] turned me onto
+   LISPs and as a result Emacs.

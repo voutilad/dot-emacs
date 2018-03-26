@@ -1,0 +1,47 @@
+#+TITLE: Javascript
+#+AUTHOR: Dave Voutila
+#+EMAIL: voutilad@gmail.com
+
+* Major Mode via js2-mode
+  I'd argue this is the de-facto js major mode for Emacs.
+
+  Once again, Howard has a decent [[https://github.com/howardabrams/dot-files/blob/master/emacs-javascript.org#js2-mode][start point]].
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package js2-mode
+      :ensure t
+      :init
+      (setq js-basic-indent 2)
+      (setq-default js2-basic-indent 2
+                    js2-basic-offset 2
+                    js2-auto-indent-p t
+                    js2-cleanup-whitespace t
+                    js2-enter-indents-newline t
+                    js2-indent-on-enter-key t
+                    js2-global-externs (list "Promise" "window" "module" "require" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "console"))
+
+      (add-hook 'js2-mode-hook
+                (lambda ()
+                  (push '("function" . ?ƒ) prettify-symbols-alist)))
+
+      (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
+  #+END_SRC
+
+** Flycheck Integration
+   Configure it to use =eslint= which I tend to use in projects.
+
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'js2-mode-hook
+               (lambda () (flycheck-select-checker 'javascript-eslint)))
+   #+END_SRC
+
+** ESLint
+   I don't tend to install =eslint= globally. Who does that?
+
+   First let's turn off some =js2-mode= warnings that =eslint= will
+   handle.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq js2-mode-show-parse-errors nil)
+     (setq js2-mode-show-strict-warnings nil)
+   #+END_SRC

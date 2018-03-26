@@ -1,0 +1,29 @@
+#+TITLE: Org Mode Configuration
+#+AUTHOR: Dave Voutila
+#+EMAIL: voutilad@gmail.com
+
+* Attention!
+  Don't forget, this project is using a local git submodule that
+  clones the git repo for org-mode. It's installed locally, so we
+  don't need to deal with =use-package= or whatever to install it.
+
+* Color & Display
+  Org can be made /more pretty/.
+
+** Bullets
+   These look oh-so-much better.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-bullets
+	:ensure t
+	:init (add-hook 'org-mode-hook 'org-bullets-mode))
+   #+END_SRC
+
+** Font Coloring
+   Make sure we fontify the native code blocks. It should default to
+   true, but just in case.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq org-src-fontify-natively t)
+     (setq org-src-tab-acts-natively t)
+   #+END_SRC

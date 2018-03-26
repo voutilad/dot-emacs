@@ -1,0 +1,5 @@
+#+TITLE: Magit
+#+Author: Dave Voutila
+#+Email: voutilad@gmail.com
+
+* Magit is Magic
