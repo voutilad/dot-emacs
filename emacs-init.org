@@ -148,6 +148,17 @@ Welcome to my Emacs config!
       (require 'use-package)
     #+END_SRC
 
+*** Diminish and Bind-Key
+    These add some extra support to =use-package= and are used in the
+    configuration downstream.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package diminish
+        :ensure t)
+      (use-package bind-key
+        :ensure t)
+    #+END_SRC
+
 * User Interface
   Pretty important to like what you're staring at all day.
 
@@ -216,6 +227,30 @@ Welcome to my Emacs config!
      ;; no audio bells please
      (setq visible-bell t)
    #+END_SRC
+
+*** Line Numbering
+    Using a simple config for now. This will need some tuning most
+    likely. Borrowing from Howard Abrams, idea is to trigger it only
+    when in a programming mode.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package linum
+        :init
+        (add-hook 'prog-mode-hook 'linum-mode)
+        (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 110))))
+    #+END_SRC
+
+*** Auto-fill (aka wrapping)
+    Wrapping at 80 chars is the polite thing to do most of time. This
+    is a hill I'm willing to die on.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package fill
+        :bind (("C-c T f" . auto-fill-mode)
+               ("C-c T t" . toggle-truncate-lines))
+        :init (add-hook 'org-mode-hook 'turn-on-auto-fill)
+        :diminish auto-fill-mode)
+    #+END_SRC
 
 *** Smart Mode Line
     Let's give [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] a shot.
@@ -315,6 +350,23 @@ Welcome to my Emacs config!
         (defalias 'redo 'undo-tree-redo)
         :bind (("C-z" . undo)     ; Zap to character isn't helpful
                ("C-S-z" . redo)))
+    #+END_SRC
+
+*** IDO
+    I swear sometimes this gives my system fits, but for now let's
+    turn it on everywhere to save some typing.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package ido
+        :ensure t
+        :init  (setq ido-enable-flex-matching t
+                     ido-ignore-extensions t
+                     ido-use-virtual-buffers t
+                     ido-everywhere t)
+        :config
+        (ido-mode 1)
+        (ido-everywhere 1)
+        (add-to-list 'completion-ignored-extensions ".pyc"))
     #+END_SRC
 
 ** Specific Package Configurations

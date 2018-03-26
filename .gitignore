@@ -6,3 +6,7 @@ auto-save-list/
 eshell/
 *~
 elpa/
+/ido.last
+/network-security.data
+/recentf
+/tramp

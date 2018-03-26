@@ -2,9 +2,7 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
-* Wrangling Parentheses
-
-** ParEdit
+* ParEdit
    Because your parentheses should stay in balance lest the world burn!
 
    #+BEGIN_SRC emacs-lisp
@@ -16,4 +14,16 @@
 			   'lisp-interaction-mode-hook
 			   'eval-expression-minibuffer-setup-hook))
 	 (add-hook mode 'enable-paredit-mode)))
+   #+END_SRC
+
+* (Rainbows!)
+   Sometimes this is distracting, but more often than not it's just
+   what I need to keep track of where the heck I am when 7 layers deep
+   into a sexp...
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package rainbow-delimiters
+       :ensure t
+       :config
+      (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
    #+END_SRC

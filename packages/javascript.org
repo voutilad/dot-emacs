@@ -16,8 +16,8 @@
                     js2-basic-offset 2
                     js2-auto-indent-p t
                     js2-cleanup-whitespace t
-                    js2-enter-indents-newline t
-                    js2-indent-on-enter-key t
+                    ;; js2-enter-indents-newline t
+                    ;; js2-indent-on-enter-key t
                     js2-global-externs (list "Promise" "window" "module" "require" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "console"))
 
       (add-hook 'js2-mode-hook
