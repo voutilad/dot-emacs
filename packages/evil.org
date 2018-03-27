@@ -6,10 +6,11 @@
 * Initialization
   Let's do some evil...
 
-  Initial config (for the mode handling) borrowed from Howard Abrams
-  config.
+** Installation
+   Initial config (for the mode handling) borrowed from Howard Abrams
+   config.
 
-  #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
     (use-package evil
       :ensure t
       :config
@@ -21,6 +22,15 @@
 		      git-rebase-mode))
 	(add-to-list 'evil-emacs-state-modes mode)))
   #+END_SRC
+
+** Color the Cursor
+   I prefer some visual indication of teh state of =<I>nsert= vs
+   =<N>avigation= mode.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq evil-insert-state-cursor '("#ff8700" box))
+     (setq evil-normal-state-cursor '("#dddd00" box))
+   #+END_SRC
 
 * "The Goggles do nothing!"
 

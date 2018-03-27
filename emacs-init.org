@@ -163,8 +163,11 @@ Welcome to my Emacs config!
   Pretty important to like what you're staring at all day.
 
 ** Fonts
-   One of the things I change the most is the font. However, for now,
-   let's just leave it the default.
+   One of the things I change the most is the font. (Fixed-width or
+   GTFO typically.) However it seems Emacs 25 w/ GTK-3 seems to work
+   well using both fixed and variable-width fonts. For instance, my
+   Org headings use variable width and they look ok. Code ends up
+   using fixed-width, which is what I want.
 
 ** Themes
    The default theme isn't too horrible, honestly, but I do prefer
@@ -294,6 +297,15 @@ Welcome to my Emacs config!
       (setq confirm-kill-emacs 'yes-or-no-p)
     #+END_SRC
 
+*** Start fullscreen
+    I like fullscreen, but I do prefer to keep some of the desktop
+    manager crap visible for now. Maybe someday I'll ditch it again
+    (if I leave Gnome3).
+
+    #+BEGIN_SRC emacs-lisp
+      (toggle-frame-maximized)
+    #+END_SRC
+
 * Package Configuration
   In general, I'm following the convention of auto-loading
   configuration files discovered in key subdirectories. Basically any
@@ -320,20 +332,31 @@ Welcome to my Emacs config!
         (add-hook 'after-init-hook 'global-company-mode)
         :config
         (add-to-list 'company-backends 'company-math-symbols-unicode)
-        :bind ("C-;" . company-complete)
+        :bind ("C-:" . company-complete)
         :diminish company-mode)
     #+END_SRC
 
+*** Yasnippets
+    Using snippets should make me faster. I've known about these for
+    awhile, but as of now have yet to use them. Let's try them out!
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package yasnippet
+        :ensure t
+        :init
+        (yas-global-mode 1)
+        :config
+        (add-to-list 'yas-snippet-dirs (expand-file-name "snippets" user-emacs-directory)))
+    #+END_SRC
+
 *** FlyCheck
-    Ubiquitous syntax and sanity checker.
+    Ubiquitous syntax and sanity checker. Simple config for now
+    borrowed from the [[https://github.com/flycheck/flycheck/blob/master/doc/user/installation.rst#use-package][installation docs]].
 
     #+BEGIN_SRC emacs-lisp
       (use-package flycheck
         :ensure t
-        :init
-        (add-hook 'after-init-hook 'global-flycheck-mode)
-        :config
-        (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+        :init (global-flycheck-mode))
     #+END_SRC
 
 *** Undo-Tree
@@ -367,6 +390,26 @@ Welcome to my Emacs config!
         (ido-mode 1)
         (ido-everywhere 1)
         (add-to-list 'completion-ignored-extensions ".pyc"))
+    #+END_SRC
+
+    Turns out [[./packages/magit.org][magit]] benefits from an IDO extension called
+    =ido-completing-read+=. It adds IDO support to a bunch of native
+    emacs stuff like the =M-x= modeline interface.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package ido-completing-read+
+        :ensure t
+        :config
+        (ido-ubiquitous-mode 1))
+    #+END_SRC
+
+*** Tags
+    I still don't quite understand how all these things work, but it
+    seems =ctags= is the basis.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package etags
+         :init (setq tags-revert-without-query 1))
     #+END_SRC
 
 ** Specific Package Configurations

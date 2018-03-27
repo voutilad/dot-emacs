@@ -1,8 +1,8 @@
-#+TITLE: Javascript
+#+ITLE: Javascript
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
-* Major Mode via js2-mode
+* js2-mode
   I'd argue this is the de-facto js major mode for Emacs.
 
   Once again, Howard has a decent [[https://github.com/howardabrams/dot-files/blob/master/emacs-javascript.org#js2-mode][start point]].
@@ -10,7 +10,7 @@
   #+BEGIN_SRC emacs-lisp
     (use-package js2-mode
       :ensure t
-      :init
+      :config
       (setq js-basic-indent 2)
       (setq-default js2-basic-indent 2
                     js2-basic-offset 2
@@ -27,7 +27,7 @@
       (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
   #+END_SRC
 
-** Flycheck Integration
+* Flycheck Integration
    Configure it to use =eslint= which I tend to use in projects.
 
    #+BEGIN_SRC emacs-lisp
@@ -35,7 +35,7 @@
                (lambda () (flycheck-select-checker 'javascript-eslint)))
    #+END_SRC
 
-** ESLint
+* ESLint
    I don't tend to install =eslint= globally. Who does that?
 
    First let's turn off some =js2-mode= warnings that =eslint= will

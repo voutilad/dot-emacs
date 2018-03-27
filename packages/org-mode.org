@@ -2,10 +2,15 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
-* Attention!
+* !Attention!
   Don't forget, this project is using a local git submodule that
   clones the git repo for org-mode. It's installed locally, so we
   don't need to deal with =use-package= or whatever to install it.
+
+  If you're reading this and you either aren't the author...or are the
+  author and forgot...=org= is loaded implicitly via the [[../init.el][init.el]] file
+  in the root of this project. It then uses =ob-tangle= to load these
+  org files.
 
 * Color & Display
   Org can be made /more pretty/.
@@ -26,4 +31,60 @@
    #+BEGIN_SRC emacs-lisp
      (setq org-src-fontify-natively t)
      (setq org-src-tab-acts-natively t)
+   #+END_SRC
+
+* Journaling
+  I'm still not really using Emacs for journaling or task management,
+  but I sure would like to try. This might come down to solving my
+  file-sync problem. (If I ever get off my butt, maybe I'll finish
+  writing [[https://github.com/voutilad/tangle][tangle]].)
+
+** org-journal
+   Test driving this after seeing Howard uses it and some good
+   recommendations on [[https://www.reddit.com/r/emacs/comments/86xh8c/what_is_your_calendar_setup/][Reddit]]. The [[https://github.com/bastibe/org-journal][org-journal]] project helps
+   auto-organize journal entries into daily files.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-journal
+       :ensure t
+        :init
+        (setq org-journal-dir "~/journal/")
+        (setq org-journal-date-format "#+TITLE: Journal Entry- %e %b %Y (%A)")
+        (setq org-journal-time-format ""))
+   #+END_SRC
+
+** File Locations
+   Need to tell Org about where we want it to scan for agenda files.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq org-agenda-files '("~/org/work"
+                              "~/org/personal"))
+   #+END_SRC
+
+* Babel
+  This by far is the coolest feature of Org mode if you ask me. It's
+  like Jupyter Notebooks but in Emacs.
+
+** Language Support
+
+  For now, I'm setting it only to languages I tend to use relatively frequently.
+
+  #+BEGIN_SRC emacs-lisp
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((shell      . t)
+                                     (js         . t)
+                                     (emacs-lisp . t)
+                                     (clojure    . t)
+                                     (python     . t)
+                                     (dot        . t)
+                                     (css        . t)))
+  #+END_SRC
+
+** Source Evaluation
+   When executing a code block with =C-c C-c=, usually we get prompted
+   to confirm if we actually want to run the code. This turns that off
+   because we're adults that can live with our mistakes, right?
+
+   #+BEGIN_SRC emacs-lisp
+     (setq org-confirm-babel-evaluate nil)
    #+END_SRC
