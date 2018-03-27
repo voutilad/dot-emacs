@@ -1,0 +1,42 @@
+#+TITLE: Python
+#+AUTHOR: Dave Voutila
+#+EMAIL: voutilad@gmail.com
+
+* Virtual Environments
+  Python without virtual environments is the worst. Making Emacs learn
+  about them is awesome using [[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper.el]].
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package virtualenvwrapper
+      :ensure t
+      ;; by default it should use WORKON_HOME, but let's be explicit
+      :init (setq venv-location (getenv "WORKON_HOME"))
+      :config
+      (venv-initialize-interactive-shells)
+      (venv-initialize-eshell))
+  #+END_SRC
+
+* JEDI
+  [[https://github.com/tkf/emacs-jedi][Jedi]] makes Python in Emacs quite enjoyable, plus it works with
+  virtual environments.
+
+  Since we're using =company-mode=, we must install =company-jedi= and
+  not the =jedi= package!
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package company-jedi
+      :ensure t
+      :init (setq company-jedi-python-bin "python")
+      :config (add-to-list 'company-backends 'company-jedi))
+  #+END_SRC
+
+  We also need to set some stuff up that's a bit OS dependent. For now
+  let's just use what works for my OpenBSD machines.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq jedi:environment-virtualenv '("/usr/local/bin/virtualenv-3")
+          python-environment-directory (expand-file-name "emacs-venv"
+                                                         (getenv "WORKON_HOME")))
+  #+END_SRC
+
+* TODO Install Elpy???
