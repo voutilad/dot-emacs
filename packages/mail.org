@@ -40,9 +40,12 @@
   #+END_SRC
 
   Since =mu4e= installs as part of the system package, all we need to
-  do is require it.
+  do is require it. (Unless we're using Homebrew on macOS.)
 
   #+BEGIN_SRC emacs-lisp
+    (if (eq system-type 'darwin)
+        (add-to-list 'load-path (expand-file-name "vendor/mu4e" user-emacs-directory)))
+
     (require 'mu4e)
 
     (setq mu4e-maildir (expand-file-name "~/.mail")

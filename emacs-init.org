@@ -303,7 +303,9 @@ Welcome to my Emacs config!
     (if I leave Gnome3).
 
     #+BEGIN_SRC emacs-lisp
-      (toggle-frame-maximized)
+      ;; Usually on macOS I'm on a huge screen
+      (if (not (eq system-type 'darwin))
+          (toggle-frame-maximized))
     #+END_SRC
 
 * Package Configuration
@@ -314,6 +316,17 @@ Welcome to my Emacs config!
   For all non-OS specific configs, they'll reside under
   =./packages=. For OS-specific configs, they'll be in something like
   =.<osname>=.
+
+** TODO Operating System Specific
+   Now the OS-specific stuff...
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package exec-path-from-shell
+       :ensure t
+       :config
+       (when (memq window-system '(mac ns x))
+         (exec-path-from-shell-initialize)))
+   #+END_SRC
 
 ** Global Utilities
    These are packages that are either general purpose, global tools or
@@ -425,13 +438,6 @@ Welcome to my Emacs config!
 	 (progn
 	   (my/log (concat "Loading config file " file))
 	   (org-babel-load-file file))))
-   #+END_SRC
-
-** TODO Operating System Specific
-   Now the OS-specific stuff...
-
-   #+BEGIN_SRC emacs-lisp
-     (my/log "TODO: Finish OS-specific stuff!!")
    #+END_SRC
 
 * Acknowledgements
