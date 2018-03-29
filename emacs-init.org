@@ -411,7 +411,9 @@ Welcome to my Emacs config!
         :config
         (ido-mode 1)
         (ido-everywhere 1)
-        (add-to-list 'completion-ignored-extensions ".pyc"))
+        (add-to-list 'completion-ignored-extensions ".pyc")
+        (setq ido-auto-merge-work-directories-length -1
+              ido-auto-merge-delay-time 3000))
     #+END_SRC
 
     Turns out [[./packages/magit.org][magit]] benefits from an IDO extension called

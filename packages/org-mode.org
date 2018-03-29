@@ -33,6 +33,33 @@
      (setq org-src-tab-acts-natively t)
    #+END_SRC
 
+** Headers
+   Howard has some cute little flags...
+
+   #+BEGIN_SRC emacs-lisp
+     (font-lock-add-keywords
+        'org-mode `(("^\\*+ \\(TODO\\) "
+                     (1 (progn (compose-region (match-beginning 1) (match-end 1) "⚑")
+                               nil)))
+                    ("^\\*+ \\(DOING\\) "
+                     (1 (progn (compose-region (match-beginning 1) (match-end 1) "⚐")
+                               nil)))
+                    ("^\\*+ \\(CANCELED\\) "
+                     (1 (progn (compose-region (match-beginning 1) (match-end 1) "✘")
+                               nil)))
+                    ("^\\*+ \\(DONE\\) "
+                     (1 (progn (compose-region (match-beginning 1) (match-end 1) "✔")
+                               nil)))))
+   #+END_SRC
+
+* Capturing
+  Going through the =org-capture= documentation...
+
+  #+BEGIN_SRC emacs-lisp
+    (setq org-default-notes-file (expand-file-name "notes.org" org-directory))
+    (define-key global-map "\C-cc" 'org-capture)
+  #+END_SRC
+
 * Journaling
   I'm still not really using Emacs for journaling or task management,
   but I sure would like to try. This might come down to solving my
@@ -48,17 +75,18 @@
      (use-package org-journal
        :ensure t
         :init
-        (setq org-journal-dir "~/journal/")
+        (setq org-journal-dir "~/org/journal/")
+        (setq org-journal-file-format "%Y%m%d.org")
         (setq org-journal-date-format "#+TITLE: Journal Entry- %e %b %Y (%A)")
-        (setq org-journal-time-format ""))
+        (setq org-journal-time-format "%R "))
    #+END_SRC
 
 ** File Locations
    Need to tell Org about where we want it to scan for agenda files.
 
    #+BEGIN_SRC emacs-lisp
-     (setq org-agenda-files '("~/org/work"
-                              "~/org/personal"))
+     (setq org-agenda-files '("~/org/agenda/work"
+                              "~/org/agenda/personal"))
    #+END_SRC
 
 * Babel
