@@ -33,10 +33,18 @@
   We also need to set some stuff up that's a bit OS dependent. For now
   let's just use what works for my OpenBSD machines.
 
-  #+BEGIN_SRC emacs-lisp
-    (setq jedi:environment-virtualenv '("/usr/local/bin/virtualenv-3")
-          python-environment-directory (expand-file-name "emacs-venv"
-                                                         (getenv "WORKON_HOME")))
+  #+BEGIN_SRC emacs-lisp :results output silent
+    (setq jedi:environment-virtualenv
+          '("/usr/local/bin/virtualenv-3"))
+
+    ;; This must point to the location the virtualenvs are created,
+    ;; not a specific virtualenv itself!
+    (let ((venv-dir (getenv "WORKON_HOME")))
+      (if venv-dir
+          (setq python-environment-directory venv-dir)
+          (message "Please set WORKON_HOME environment variable!")))
   #+END_SRC
 
 * TODO Install Elpy???
+  Elpy could replace the above config I think? Plus, it's got what
+  plants crave. /It's got electrolytes./

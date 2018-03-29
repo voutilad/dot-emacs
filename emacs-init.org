@@ -159,6 +159,15 @@ Welcome to my Emacs config!
         :ensure t)
     #+END_SRC
 
+** Global Key Map
+   Right now I *loathe* the Page Up and Page Down keys on this Lenovo
+   x270. I'm so tired of them.
+
+   #+BEGIN_SRC emacs-lisp
+     (global-unset-key (kbd "<prior>"))
+     (global-unset-key (kbd "<next>"))
+   #+END_SRC
+
 * User Interface
   Pretty important to like what you're staring at all day.
 
@@ -440,6 +449,12 @@ Welcome to my Emacs config!
 	   (org-babel-load-file file))))
    #+END_SRC
 
+* The Final Countdown
+  Why not start in =eshell=?
+
+  #+BEGIN_SRC emacs-lisp
+    (setq initial-buffer-choice 'eshell)
+  #+END_SRC
 * Acknowledgements
   Like almost every Emacs config in existance, this one borrows
   heavily from a few key players.
