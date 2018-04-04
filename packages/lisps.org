@@ -11,9 +11,11 @@
        :diminish "﹙﹚"
        :init
        (dolist (mode (list 'emacs-lisp-mode-hook
-			   'lisp-interaction-mode-hook
-			   'eval-expression-minibuffer-setup-hook))
-	 (add-hook mode 'enable-paredit-mode)))
+                           'lisp-interaction-mode-hook
+                           'clojure-mode-hook
+                           'clojurescript-mode-hook
+                           'eval-expression-minibuffer-setup-hook))
+         (add-hook mode 'enable-paredit-mode)))
    #+END_SRC
 
 * (Rainbows!)

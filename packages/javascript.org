@@ -2,10 +2,14 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
-* js2-mode
-  I'd argue this is the de-facto js major mode for Emacs.
+* Javascript
+  The biggest love/hate relationship I have...
 
-  Once again, Howard has a decent [[https://github.com/howardabrams/dot-files/blob/master/emacs-javascript.org#js2-mode][start point]].
+** js2-mode
+
+   I'd argue this is the de-facto javascript major mode for Emacs.
+
+   Once again, Howard has a decent [[https://github.com/howardabrams/dot-files/blob/master/emacs-javascript.org#js2-mode][start point]].
 
   #+BEGIN_SRC emacs-lisp
     (use-package js2-mode
@@ -26,6 +30,18 @@
 
       (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
   #+END_SRC
+
+** rjsx-mode
+   React has its good things and jsx is one of them. Sadly, =js2-mode=
+   doesn't quite handle more modern jsx yet.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package rjsx-mode
+       :ensure t
+       :config
+       ;; if it looks like a component, maybe it's got jsx?
+       (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode)))
+   #+END_SRC
 
 * Flycheck Integration
    Configure it to use =eslint= which I tend to use in projects.

@@ -1,0 +1,11 @@
+#+TITLE: Graphviz
+#+AUTHOR: Dave Voutila
+#+EMAIL: voutilad@gmail.com
+
+* graphviz-dot-mode
+  See http://ppareit.github.io/graphviz-dot-mode/ for details.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package graphviz-dot-mode
+      :ensure t)
+  #+END_SRC
