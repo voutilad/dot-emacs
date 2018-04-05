@@ -116,3 +116,9 @@
    #+BEGIN_SRC emacs-lisp
      (setq org-confirm-babel-evaluate nil)
    #+END_SRC
+* Exporting
+  Seems we need [[https://github.com/hniksic/emacs-htmlize][htmlize]] to support Org -> HTML exporting.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package htmlize :ensure t)
+  #+END_SRC
