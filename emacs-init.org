@@ -326,7 +326,7 @@ Welcome to my Emacs config!
   =./packages=. For OS-specific configs, they'll be in something like
   =.<osname>=.
 
-** TODO Operating System Specific
+** Operating System Specific
    Now the OS-specific stuff...
 
    #+BEGIN_SRC emacs-lisp
@@ -338,14 +338,17 @@ Welcome to my Emacs config!
    #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
-     ;; add Tramp mode via PLINK on Windows
      (if (eq window-system 'w32)
-       (setq putty-directy "c:/Program Files/PuTTY")
-       (setq tramp-default-method "plink")
-       (when (and (not (string-match putty-directory (getenv "PATH")))
-                  (file-directory-p putty-directory))
-       (setenv "PATH" (concat putty-directory ";" (getenv "PATH")))
-       (add-to-list 'exec-path putty-directory)))
+         (let ((putty-dir "c:/Program Files/PuTTY")
+               (git-dir "c:/Program Files/Git/bin"))
+           (setq tramp-default-method "plink")
+           (when (and (not (string-match putty-dir (getenv "PATH")))
+                      (file-directory-p putty-dir)))
+           (setenv "PATH" (concat putty-dir ";" (getenv "PATH")))
+           (add-to-list 'exec-path putty-dir)
+
+           (setenv "PATH" (concat git-dir ";" (getenv "PATH")))
+           (add-to-list 'exec-path git-dir)))
    #+END_SRC
 
 ** Global Utilities
