@@ -337,6 +337,17 @@ Welcome to my Emacs config!
          (exec-path-from-shell-initialize)))
    #+END_SRC
 
+   #+BEGIN_SRC emacs-lisp
+     ;; add Tramp mode via PLINK on Windows
+     (if (eq window-system 'w32)
+       (setq putty-directy "c:/Program Files/PuTTY")
+       (setq tramp-default-method "plink")
+       (when (and (not (string-match putty-directory (getenv "PATH")))
+                  (file-directory-p putty-directory))
+       (setenv "PATH" (concat putty-directory ";" (getenv "PATH")))
+       (add-to-list 'exec-path putty-directory)))
+   #+END_SRC
+
 ** Global Utilities
    These are packages that are either general purpose, global tools or
    basically minor modes used by language-specific major modes.
