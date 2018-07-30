@@ -46,7 +46,7 @@
     (if (eq system-type 'darwin)
         (add-to-list 'load-path (expand-file-name "vendor/mu4e" user-emacs-directory)))
 
-    (if (not (eq window-system 'w32))
+    (if (not (or (eq window-system 'w32) (eq system-type 'gnu/linux)))
         (require 'mu4e))
 
     (setq mu4e-maildir (expand-file-name "~/.mail")
@@ -61,7 +61,7 @@
    has been somewhat working so far.
 
    #+BEGIN_SRC emacs-lisp
-     (if (not (eq window-system 'w32))
+     (if (not (or (eq system-type 'gnu/linux) (eq window-system 'w32)))
          (setq mu4e-contexts
                `(, (make-mu4e-context
                     :name "Gmail"
@@ -96,7 +96,7 @@
    mail, it helps to make some bookmarks for commonly used searches.
 
    #+BEGIN_SRC emacs-lisp
-     (if (not (eq window-system 'w32))
+     (if (not (or (eq system-type 'gnu/linux) (eq window-system 'w32)))
          (setq mu4e-bookmarks
                `( ,(make-mu4e-bookmark
                     :name  "Unread Messages"
