@@ -178,6 +178,20 @@ Welcome to my Emacs config!
    Org headings use variable width and they look ok. Code ends up
    using fixed-width, which is what I want.
 
+*** If running under Gnome3
+    It seems Emacs under Gnome3 "just works" with proper fonts.
+
+    ** But how do we detect Gnome3? pgrep? **
+
+*** If NOT running under Gnome3
+    If running in say, [[http://man.openbsd.org/cwm][cwm]], we need to set some fonts otherwise it
+    assumes it can figure them out from =~/.Xdefaults=...
+
+    #+BEGIN_SRC emacs-lisp
+      ;; (set-default-font "DejaVu Sans Mono for Powerline 7")
+      (set-frame-font "FantasqueSansMono 8")
+    #+END_SRC
+
 ** Themes
    The default theme isn't too horrible, honestly, but I do prefer
    something other than a white background.
@@ -189,29 +203,7 @@ Welcome to my Emacs config!
      (use-package solarized-theme
        :ensure t
        :config
-       (setq x-underline-at-descent-line t))
-
-     ;; some options available:
-     ;; make the fringe stand out from the background
-     ;(setq solarized-distinct-fringe-background t)
-
-     ;; Don't change the font for some headings and titles
-     ;(setq solarized-use-variable-pitch nil)
-
-     ;; make the modeline high contrast
-     ;(setq solarized-high-contrast-mode-line t)
-
-     ;; Use less bolding
-     ;(setq solarized-use-less-bold t)
-
-     ;; Use more italics
-     ;(setq solarized-use-more-italic t)
-
-     ;; Use less colors for indicators such as git:gutter, flycheck and similar
-     ;(setq solarized-emphasize-indicators nil)
-
-     ;; Don't change size of org-mode headlines (but keep other size-changes)
-     ;;(setq solarized-scale-org-headlines nil)
+         (setq x-underline-at-descent-line t))
 
      (load-theme 'solarized-dark t)
    #+END_SRC
@@ -249,7 +241,8 @@ Welcome to my Emacs config!
       (use-package linum
         :init
         (add-hook 'prog-mode-hook 'linum-mode)
-        (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 110))))
+        (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 60))))
+      ;; in the future, we should have the linum :height be a function of default face height
     #+END_SRC
 
 *** Auto-fill (aka wrapping)
@@ -378,7 +371,11 @@ Welcome to my Emacs config!
     #+BEGIN_SRC emacs-lisp
       (use-package flycheck
         :ensure t
-        :init (global-flycheck-mode))
+        :init (global-flycheck-mode)
+        :config
+        (let ((include-paths (list "/usr/include" "/usr/local/include")))
+          (setq flycheck-clang-include-path include-paths
+                flycheck-gcc-include-path include-paths)))
     #+END_SRC
 
 *** Undo-Tree
