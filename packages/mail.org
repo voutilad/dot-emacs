@@ -116,3 +116,9 @@
              :query "to:voutilad@gmail.com AND flag:trashed"
              :key ?t)))
    #+END_SRC
+* Sending Mail
+  On OpenBSD, I use the local smtpd components and the local sendmail.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq send-mail-function 'sendmail-send-it)
+  #+END_SRC
