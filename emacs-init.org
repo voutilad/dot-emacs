@@ -200,12 +200,34 @@ Welcome to my Emacs config!
    slight tuning.
 
    #+BEGIN_SRC emacs-lisp
-     (use-package solarized-theme
-       :ensure t
-       :config
-         (setq x-underline-at-descent-line t))
+    (if (display-graphic-p)
+	 (progn
+	   (use-package solarized-theme
+	     :ensure t
+	     :config
+	     (setq x-underline-at-descent-line t))
 
-     (load-theme 'solarized-dark t)
+	   ;; some options available:
+	   ;; make the fringe stand out from the background
+					     ;(setq solarized-distinct-fringe-background t)
+
+	   ;; Don't change the font for some headings and titles
+					     ;(setq solarized-use-variable-pitch nil)
+
+	   ;; make the modeline high contrast
+					     ;(setq solarized-high-contrast-mode-line t)
+
+	   ;; Use less bolding
+					     ;(setq solarized-use-less-bold t)
+
+	   ;; Use more italics
+					     ;(setq solarized-use-more-italic t)
+
+	   ;; Use less colors for indicators such as git:gutter, flycheck and similar
+					     ;(setq solarized-emphasize-indicators nil)
+	   ;; Don't change size of org-mode headlines (but keep other size-changes)
+	   ;;(setq solarized-scale-org-headlines nil)
+	   (load-theme 'solarized-dark t)))
    #+END_SRC
 
 ** User Inteface
@@ -226,7 +248,7 @@ Welcome to my Emacs config!
      ;; more real estate please
      (menu-bar-mode -1)
      (tool-bar-mode -1)
-     (scroll-bar-mode -1)
+     (if (display-graphic-p) (scroll-bar-mode -1))
 
      ;; no audio bells please
      (setq visible-bell t)
@@ -241,8 +263,13 @@ Welcome to my Emacs config!
       (use-package linum
         :init
         (add-hook 'prog-mode-hook 'linum-mode)
+<<<<<<< HEAD
         (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 60))))
       ;; in the future, we should have the linum :height be a function of default face height
+=======
+        (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 110))))
+      (setq linum-format "%d ")
+>>>>>>> d55fdcf6e6baaa8776ee035dc5e883801bdab281
     #+END_SRC
 
 *** Auto-fill (aka wrapping)
@@ -261,10 +288,11 @@ Welcome to my Emacs config!
     Let's give [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] a shot.
 
     #+BEGIN_SRC emacs-lisp
-      (use-package smart-mode-line
-        :ensure t
-        :config
-        (sml/setup))
+      (if (display-graphic-p)
+	  (use-package smart-mode-line
+		       :ensure t
+		       :config
+		       (sml/setup)))
     #+END_SRC
 
 *** Whitespace
@@ -319,7 +347,7 @@ Welcome to my Emacs config!
   =./packages=. For OS-specific configs, they'll be in something like
   =.<osname>=.
 
-** TODO Operating System Specific
+** Operating System Specific
    Now the OS-specific stuff...
 
    #+BEGIN_SRC emacs-lisp
@@ -328,6 +356,20 @@ Welcome to my Emacs config!
        :config
        (when (memq window-system '(mac ns x))
          (exec-path-from-shell-initialize)))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (if (eq window-system 'w32)
+         (let ((putty-dir "c:/Program Files/PuTTY")
+               (git-dir "c:/Program Files/Git/bin"))
+           (setq tramp-default-method "plink")
+           (when (and (not (string-match putty-dir (getenv "PATH")))
+                      (file-directory-p putty-dir)))
+           (setenv "PATH" (concat putty-dir ";" (getenv "PATH")))
+           (add-to-list 'exec-path putty-dir)
+
+           (setenv "PATH" (concat git-dir ";" (getenv "PATH")))
+           (add-to-list 'exec-path git-dir)))
    #+END_SRC
 
 ** Global Utilities

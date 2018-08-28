@@ -46,7 +46,8 @@
     (if (eq system-type 'darwin)
         (add-to-list 'load-path (expand-file-name "vendor/mu4e" user-emacs-directory)))
 
-    (require 'mu4e)
+    (if (not (or (eq window-system 'w32) (eq system-type 'gnu/linux)))
+        (require 'mu4e))
 
     (setq mu4e-maildir (expand-file-name "~/.mail")
           mu4e-attachment-dir "~/Downloads"
@@ -60,33 +61,34 @@
    has been somewhat working so far.
 
    #+BEGIN_SRC emacs-lisp
-     (setq mu4e-contexts
-           `(, (make-mu4e-context
-               :name "Gmail"
-               :enter-func (lambda () (mu4e-message "Entering Gmail context"))
-               :leave-func (lambda () (mu4e-message "Leaving Gmail context"))
-               :match-func (lambda (msg)
-                             (when msg
-                               (mu4e-message-contact-field-matches msg
-                                 :to "voutilad@gmail.com")))
-               :vars '( ( user-mail-address      . "voutilad@gmail.com"  )
-                        ( user-full-name         . "Dave Voutila" )
-                        ( mu4e-compose-signature .
-                          (concat "Dave\n"))))
-             , (make-mu4e-context
-                :name "Sisu"
-                :enter-func (lambda () (mu4e-message "Entering Sisu context"))
-                :leave-func (lambda () (mu4e-message "Leaving Sisu context"))
-                :match-func (lambda (msg)
-                              (when msg
-                                (mu4e-message-contact-field-matches msg
-                                  :to "dave@sisu.io")))
-                :vars '( ( user-mail-address      . "dave@sisu.io")
-                         ( user-full-name         . "Dave Voutila")
-                         ( mu4e-compose-signature .
-                           (concat "Dave Voutila\n"
-                                   "+1 617-538-2151\n"
-                                   "Sisu Integrated Services, LLC\n"))))))
+     (if (not (or (eq system-type 'gnu/linux) (eq window-system 'w32)))
+         (setq mu4e-contexts
+               `(, (make-mu4e-context
+                    :name "Gmail"
+                    :enter-func (lambda () (mu4e-message "Entering Gmail context"))
+                    :leave-func (lambda () (mu4e-message "Leaving Gmail context"))
+                    :match-func (lambda (msg)
+                                  (when msg
+                                    (mu4e-message-contact-field-matches msg
+                                                                        :to "voutilad@gmail.com")))
+                    :vars '( ( user-mail-address      . "voutilad@gmail.com"  )
+                             ( user-full-name         . "Dave Voutila" )
+                             ( mu4e-compose-signature .
+                                                      (concat "Dave\n"))))
+                   , (make-mu4e-context
+                      :name "Sisu"
+                      :enter-func (lambda () (mu4e-message "Entering Sisu context"))
+                      :leave-func (lambda () (mu4e-message "Leaving Sisu context"))
+                      :match-func (lambda (msg)
+                                    (when msg
+                                      (mu4e-message-contact-field-matches msg
+                                                                          :to "dave@sisu.io")))
+                      :vars '( ( user-mail-address      . "dave@sisu.io")
+                               ( user-full-name         . "Dave Voutila")
+                               ( mu4e-compose-signature .
+                                                        (concat "Dave Voutila\n"
+                                                                "+1 617-538-2151\n"
+                                                                "Sisu Integrated Services, LLC\n")))))))
    #+END_SRC
 
 ** Bookmarks
@@ -94,27 +96,28 @@
    mail, it helps to make some bookmarks for commonly used searches.
 
    #+BEGIN_SRC emacs-lisp
-     (setq mu4e-bookmarks
-            `( ,(make-mu4e-bookmark
-              :name  "Unread Messages"
-              :query "flag:unread AND NOT flag:trashed"
-              :key ?u)
-           ,(make-mu4e-bookmark
-              :name "Today's Messages"
-              :query "date:today..now"
-              :key ?t)
-           ,(make-mu4e-bookmark
-             :name  "Work Email"
-             :query "to:dave@sisu.io"
-             :key ?w)
-           ,(make-mu4e-bookmark
-             :name  "Personal Email"
-             :query "to:voutilad@gmail.com"
-             :key ?p)
-           ,(make-mu4e-bookmark
-             :name "Personal Trash"
-             :query "to:voutilad@gmail.com AND flag:trashed"
-             :key ?t)))
+     (if (not (or (eq system-type 'gnu/linux) (eq window-system 'w32)))
+         (setq mu4e-bookmarks
+               `( ,(make-mu4e-bookmark
+                    :name  "Unread Messages"
+                    :query "flag:unread AND NOT flag:trashed"
+                    :key ?u)
+                  ,(make-mu4e-bookmark
+                    :name "Today's Messages"
+                    :query "date:today..now"
+                    :key ?t)
+                  ,(make-mu4e-bookmark
+                    :name  "Work Email"
+                    :query "to:dave@sisu.io"
+                    :key ?w)
+                  ,(make-mu4e-bookmark
+                    :name  "Personal Email"
+                    :query "to:voutilad@gmail.com"
+                    :key ?p)
+                  ,(make-mu4e-bookmark
+                    :name "Personal Trash"
+                    :query "to:voutilad@gmail.com AND flag:trashed"
+                    :key ?t))))
    #+END_SRC
 * Sending Mail
   On OpenBSD, I use the local smtpd components and the local sendmail.
