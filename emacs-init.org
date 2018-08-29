@@ -230,7 +230,7 @@ Welcome to my Emacs config!
 	   (load-theme 'solarized-dark t)))
    #+END_SRC
 
-** User Inteface
+** User Interface
    Now we tune some of the stuff we see and interact with in the UI.
 
 *** Spaces, not Tabs!
@@ -263,13 +263,8 @@ Welcome to my Emacs config!
       (use-package linum
         :init
         (add-hook 'prog-mode-hook 'linum-mode)
-<<<<<<< HEAD
         (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 60))))
-      ;; in the future, we should have the linum :height be a function of default face height
-=======
-        (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 110))))
       (setq linum-format "%d ")
->>>>>>> d55fdcf6e6baaa8776ee035dc5e883801bdab281
     #+END_SRC
 
 *** Auto-fill (aka wrapping)
