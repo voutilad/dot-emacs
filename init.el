@@ -8,6 +8,10 @@
 
 (defconst orgdir (expand-file-name "vendor/org-mode" user-emacs-directory))
 
+;; My Win10 instance /eyeroll needs to be helped into using UTF-8
+(if (eq system-type 'windows-nt)
+    (set-language-environment "UTF-8"))
+
 (my/log (concat "Loading local org babel tangle (ob-tangle) install from " orgdir))
 (add-to-list 'load-path (expand-file-name "lisp" orgdir))
 (require 'ob-tangle)
@@ -16,4 +20,3 @@
 ;; switch to initializing via org files
 (org-babel-load-file
  (expand-file-name "emacs-init.org" user-emacs-directory))
-

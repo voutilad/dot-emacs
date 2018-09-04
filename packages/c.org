@@ -1,0 +1,24 @@
+#+TITLE: C (is for Cookie)
+#+Author: Dave Voutila
+#+Email: voutilad@gmail.com
+
+* C!
+  The best language?
+
+  Let's follow the [[https://openbsd.org][OpenBSD]] style format.
+
+  #+BEGIN_SRC emacs-lisp
+    (c-add-style "openbsd"
+                 '("bsd"
+                   (c-backspace-function . delete-backward-char)
+                   (c-syntactic-indentation-in-macros . nil)
+                   (c-tab-always-indent . nil)
+                   (c-hanging-braces-alist
+                    (block-close . c-snug-do-while))
+                   (c-offsets-alist
+                    (arglist-cont-nonempty . *)
+                    (statement-cont . *))
+                   (indent-tabs-mode . t)))
+
+    (setq c-default-style "openbsd")
+  #+END_SRC

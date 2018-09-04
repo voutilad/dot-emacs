@@ -178,6 +178,20 @@ Welcome to my Emacs config!
    Org headings use variable width and they look ok. Code ends up
    using fixed-width, which is what I want.
 
+*** If running under Gnome3
+    It seems Emacs under Gnome3 "just works" with proper fonts.
+
+    ** But how do we detect Gnome3? pgrep? **
+
+*** If NOT running under Gnome3
+    If running in say, [[http://man.openbsd.org/cwm][cwm]], we need to set some fonts otherwise it
+    assumes it can figure them out from =~/.Xdefaults=...
+
+    #+BEGIN_SRC emacs-lisp
+      ;; (set-default-font "DejaVu Sans Mono for Powerline 7")
+      (set-frame-font "FantasqueSansMono 8")
+    #+END_SRC
+
 ** Themes
    The default theme isn't too horrible, honestly, but I do prefer
    something other than a white background.
@@ -186,37 +200,37 @@ Welcome to my Emacs config!
    slight tuning.
 
    #+BEGIN_SRC emacs-lisp
-     (use-package solarized-theme
-       :ensure t
-       :config
-       (setq x-underline-at-descent-line t))
+    (if (display-graphic-p)
+	 (progn
+	   (use-package solarized-theme
+	     :ensure t
+	     :config
+	     (setq x-underline-at-descent-line t))
 
-     ;; some options available:
-     ;; make the fringe stand out from the background
-     ;(setq solarized-distinct-fringe-background t)
+	   ;; some options available:
+	   ;; make the fringe stand out from the background
+					     ;(setq solarized-distinct-fringe-background t)
 
-     ;; Don't change the font for some headings and titles
-     ;(setq solarized-use-variable-pitch nil)
+	   ;; Don't change the font for some headings and titles
+					     ;(setq solarized-use-variable-pitch nil)
 
-     ;; make the modeline high contrast
-     ;(setq solarized-high-contrast-mode-line t)
+	   ;; make the modeline high contrast
+					     ;(setq solarized-high-contrast-mode-line t)
 
-     ;; Use less bolding
-     ;(setq solarized-use-less-bold t)
+	   ;; Use less bolding
+					     ;(setq solarized-use-less-bold t)
 
-     ;; Use more italics
-     ;(setq solarized-use-more-italic t)
+	   ;; Use more italics
+					     ;(setq solarized-use-more-italic t)
 
-     ;; Use less colors for indicators such as git:gutter, flycheck and similar
-     ;(setq solarized-emphasize-indicators nil)
-
-     ;; Don't change size of org-mode headlines (but keep other size-changes)
-     ;;(setq solarized-scale-org-headlines nil)
-
-     (load-theme 'solarized-dark t)
+	   ;; Use less colors for indicators such as git:gutter, flycheck and similar
+					     ;(setq solarized-emphasize-indicators nil)
+	   ;; Don't change size of org-mode headlines (but keep other size-changes)
+	   ;;(setq solarized-scale-org-headlines nil)
+	   (load-theme 'solarized-dark t)))
    #+END_SRC
 
-** User Inteface
+** User Interface
    Now we tune some of the stuff we see and interact with in the UI.
 
 *** Spaces, not Tabs!
@@ -234,7 +248,7 @@ Welcome to my Emacs config!
      ;; more real estate please
      (menu-bar-mode -1)
      (tool-bar-mode -1)
-     (scroll-bar-mode -1)
+     (if (display-graphic-p) (scroll-bar-mode -1))
 
      ;; no audio bells please
      (setq visible-bell t)
@@ -249,7 +263,8 @@ Welcome to my Emacs config!
       (use-package linum
         :init
         (add-hook 'prog-mode-hook 'linum-mode)
-        (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 110))))
+        (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 60))))
+      (setq linum-format "%d ")
     #+END_SRC
 
 *** Auto-fill (aka wrapping)
@@ -268,10 +283,11 @@ Welcome to my Emacs config!
     Let's give [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] a shot.
 
     #+BEGIN_SRC emacs-lisp
-      (use-package smart-mode-line
-        :ensure t
-        :config
-        (sml/setup))
+      (if (display-graphic-p)
+	  (use-package smart-mode-line
+		       :ensure t
+		       :config
+		       (sml/setup)))
     #+END_SRC
 
 *** Whitespace
@@ -326,7 +342,7 @@ Welcome to my Emacs config!
   =./packages=. For OS-specific configs, they'll be in something like
   =.<osname>=.
 
-** TODO Operating System Specific
+** Operating System Specific
    Now the OS-specific stuff...
 
    #+BEGIN_SRC emacs-lisp
@@ -335,6 +351,20 @@ Welcome to my Emacs config!
        :config
        (when (memq window-system '(mac ns x))
          (exec-path-from-shell-initialize)))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (if (eq window-system 'w32)
+         (let ((putty-dir "c:/Program Files/PuTTY")
+               (git-dir "c:/Program Files/Git/bin"))
+           (setq tramp-default-method "plink")
+           (when (and (not (string-match putty-dir (getenv "PATH")))
+                      (file-directory-p putty-dir)))
+           (setenv "PATH" (concat putty-dir ";" (getenv "PATH")))
+           (add-to-list 'exec-path putty-dir)
+
+           (setenv "PATH" (concat git-dir ";" (getenv "PATH")))
+           (add-to-list 'exec-path git-dir)))
    #+END_SRC
 
 ** Global Utilities
@@ -378,7 +408,11 @@ Welcome to my Emacs config!
     #+BEGIN_SRC emacs-lisp
       (use-package flycheck
         :ensure t
-        :init (global-flycheck-mode))
+        :init (global-flycheck-mode)
+        :config
+        (let ((include-paths (list "/usr/include" "/usr/local/include")))
+          (setq flycheck-clang-include-path include-paths
+                flycheck-gcc-include-path include-paths)))
     #+END_SRC
 
 *** Undo-Tree
