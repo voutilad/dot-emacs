@@ -8,5 +8,7 @@
 
   #+BEGIN_SRC emacs-lisp
     (use-package go-mode
-      :ensure t)
+      :ensure t
+      :init
+      (add-hook 'before-save-hook #'gofmt-before-save))
   #+END_SRC
