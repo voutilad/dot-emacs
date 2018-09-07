@@ -189,7 +189,9 @@ Welcome to my Emacs config!
 
     #+BEGIN_SRC emacs-lisp
       ;; (set-default-font "DejaVu Sans Mono for Powerline 7")
-      (set-frame-font "FantasqueSansMono 8")
+      (if (eq system-type 'darwin)
+          (set-frame-font "Fantasque Sans Mono 16")
+        (set-frame-font "Fantasque Sans Mono 8"))
     #+END_SRC
 
 ** Themes
@@ -263,7 +265,11 @@ Welcome to my Emacs config!
       (use-package linum
         :init
         (add-hook 'prog-mode-hook 'linum-mode)
-        (add-hook 'linum-mode-hook (lambda () (set-face-attribute 'linum nil :height 60))))
+        (add-hook 'linum-mode-hook
+                  (lambda ()
+                    (if (eq system-type 'darwin)
+                        (set-face-attribute 'linum nil :height 120)
+                      (set-face-attribute 'linum nil :height 60)))))
       (setq linum-format "%d ")
     #+END_SRC
 
