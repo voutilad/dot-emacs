@@ -1,0 +1,10 @@
+#+TITLE Rest Client
+#+Author: Dave Voutlia
+#+Email: voutilad@gmail.com
+
+* Rest Client
+  Let's give this a shot... I'd like to be able to document my HTTP
+  API experiments without dealing with =curl= and shell history.
+
+  #+BEGIN_SRC emacs-lisp
+  #+END_SRC
