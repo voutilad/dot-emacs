@@ -35,7 +35,7 @@
 
   #+BEGIN_SRC emacs-lisp :results output silent
     (setq jedi:environment-virtualenv
-          '("/usr/local/bin/virtualenv-3"))
+          '("virtualenv"))
 
     ;; This must point to the location the virtualenvs are created,
     ;; not a specific virtualenv itself!
