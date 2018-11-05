@@ -40,7 +40,10 @@
             cider-show-error-buffer t
             nrepl-hide-special-buffers t
             ;; Stop error buffer from popping up while working in buffers other than the REPL:
-            nrepl-popup-stacktraces nil)
+            nrepl-popup-stacktraces nil
+            ;; CIDER likes to try to bind to IPv6 :: but for some reason Java hates it on OpenBSD
+            cider-lein-parameters "repl :headless :host 0.0.0.0"
+            )
 
       ;; (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
       (add-hook 'cider-mode-hook 'company-mode)
