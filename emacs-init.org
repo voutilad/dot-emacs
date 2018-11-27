@@ -204,10 +204,9 @@ Welcome to my Emacs config!
    #+BEGIN_SRC emacs-lisp
     (if (display-graphic-p)
 	 (progn
-	   (use-package solarized-theme
+	   (use-package dracula-theme
 	     :ensure t
-	     :config
-	     (setq x-underline-at-descent-line t))
+	     :config)
 
 	   ;; some options available:
 	   ;; make the fringe stand out from the background
@@ -229,7 +228,7 @@ Welcome to my Emacs config!
 					     ;(setq solarized-emphasize-indicators nil)
 	   ;; Don't change size of org-mode headlines (but keep other size-changes)
 	   ;;(setq solarized-scale-org-headlines nil)
-	   (load-theme 'solarized-dark t)))
+	   (load-theme 'dracula t)))
    #+END_SRC
 
 ** User Interface
