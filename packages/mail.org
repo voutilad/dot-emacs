@@ -43,16 +43,17 @@
   do is require it. (Unless we're using Homebrew on macOS.)
 
   #+BEGIN_SRC emacs-lisp
-    (if (eq system-type 'darwin)
-        (add-to-list 'load-path (expand-file-name "vendor/mu4e" user-emacs-directory)))
+    ;;
+    ;; (if (eq system-type 'darwin)
+        ;; (add-to-list 'load-path (expand-file-name "vendor/mu4e" user-emacs-directory)))
 
-    (if (not (or (eq window-system 'w32) (eq system-type 'gnu/linux)))
-        (require 'mu4e))
-
-    (setq mu4e-maildir (expand-file-name "~/.mail")
-          mu4e-attachment-dir "~/Downloads"
-          mu4e-get-mail-command "mbsync gmail sisu"
-          mu4e-update-interval 300)
+    (if (string-equal system-type "openbsd")
+        (progn
+          (add-to-list 'load-path (expand-file-name "vendor/mu4e" user-emacs-directory))
+          (setq mu4e-maildir (expand-file-name "~/.mail")
+                mu4e-attachment-dir "~/Downloads"
+                mu4e-get-mail-command "mbsync gmail sisu"
+                mu4e-update-interval 300)))
   #+END_SRC
 
 ** Contexts
@@ -61,7 +62,7 @@
    has been somewhat working so far.
 
    #+BEGIN_SRC emacs-lisp
-     (if (not (or (eq system-type 'gnu/linux) (eq window-system 'w32)))
+     (if (string-equal system-type "openbsd")
          (setq mu4e-contexts
                `(, (make-mu4e-context
                     :name "Gmail"
@@ -96,7 +97,7 @@
    mail, it helps to make some bookmarks for commonly used searches.
 
    #+BEGIN_SRC emacs-lisp
-     (if (not (or (eq system-type 'gnu/linux) (eq window-system 'w32)))
+     (if (string-equal system-type "openbsd")
          (setq mu4e-bookmarks
                `( ,(make-mu4e-bookmark
                     :name  "Unread Messages"
