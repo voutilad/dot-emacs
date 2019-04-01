@@ -165,7 +165,9 @@ Welcome to my Emacs config!
 
    #+BEGIN_SRC emacs-lisp
      (global-unset-key (kbd "<prior>"))
+     (global-set-key [(control prior)] 'scroll-down-command)
      (global-unset-key (kbd "<next>"))
+     (global-set-key [(control next)] 'scroll-up-command)
    #+END_SRC
 
 * User Interface
@@ -314,6 +316,13 @@ Welcome to my Emacs config!
         (set-face-attribute 'whitespace-newline     nil :foreground "#666666" :background nil)
         (set-face-attribute 'whitespace-indentation nil :foreground "#666666" :background nil)
         :diminish whitespace-mode)
+    #+END_SRC
+
+*** Know which column you're in
+    For some reason column-number-mode isn't on by default?
+
+    #+BEGIN_SRC emacs-lisp
+      (setq column-number-mode t)
     #+END_SRC
 
 *** "I just can't quit you..."
