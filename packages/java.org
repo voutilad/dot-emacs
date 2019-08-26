@@ -26,30 +26,35 @@
 * Eclipse JDT Language Server
   Given all the work on LSP-based approaches to language support, I
   figured I'd try to approach an Eclipse-like experience in Emacs
-  using =java-lsp=.
+  using [[https://github.com/emacs-lsp/lsp-java][lsp-java]]. Surprisingly, it's pretty good!
+
+  I do turn off the "sideline" code actions stuff (since I'm usually
+  in a tui-based emacs, not gui) and also the doc stuff since it's
+  very prone to just taking up a ridiculous amount of screen.
 
   #+BEGIN_SRC emacs-lisp
-    ; First the dependencies
-    (use-package projectile :ensure t)
-    (use-package yasnippet :ensure t)
-    (use-package lsp-mode :ensure t)
-    (use-package hydra :ensure t)
-    (use-package company-lsp :ensure t)
-    (use-package lsp-ui
-      :ensure t
-      :init
-      (setq lsp-ui-doc-enable nil))
+        ; First the dependencies
+        (use-package projectile :ensure t)
+        (use-package yasnippet :ensure t)
+        (use-package lsp-mode :ensure t)
+        (use-package hydra :ensure t)
+        (use-package company-lsp :ensure t)
+        (use-package lsp-ui
+          :ensure t
+          :init
+          (setq lsp-ui-doc-enable nil)
+          (setq lsp-ui-sideline-show-code-actions nil))
 
-    (use-package lsp-java
-      :ensure t
-      :init
-      (add-hook 'java-mode-hook #'lsp))
+        (use-package lsp-java
+          :ensure t
+          :init
+          (add-hook 'java-mode-hook #'lsp))
 
-    (use-package dap-mode
-      :ensure t :after lsp-mode
-      :config
-      (dap-mode t)
-      (dap-ui-mode t))
+        (use-package dap-mode
+          :ensure t :after lsp-mode
+          :config
+          (dap-mode t)
+          (dap-ui-mode t))
 
-    (use-package dap-java :after (lsp-java))
+        (use-package dap-java :after (lsp-java))
   #+END_SRC
