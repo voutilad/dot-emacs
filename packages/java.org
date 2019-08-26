@@ -53,18 +53,3 @@
 
     (use-package dap-java :after (lsp-java))
   #+END_SRC
-
-* The Futile Fight
-  Java outside of a Java-centric IDE (i.e. /IntelliJ/) is a royal pain
-  in the butt. This is a futile attempt to make it less so.
-
-** jtags
-   Let's take =jtags= for a spin. No idea if it'll work.
-
-   /Disable this for now -- 24 Aug 2019/
-
-   #+BEGIN_SRC emacs-lisp
-     ;; (use-package jtags
-     ;;   :ensure t
-     ;;   :init (add-hook 'java-mode-hook 'jtags-mode))
-   #+END_SRC
