@@ -11,4 +11,14 @@
       :init)
   #+END_SRC
 
+* Flycheck-Rust
+  Make flycheck not suck with rust?
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package flycheck-rust
+      :ensure t
+      :init
+      (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+  #+END_SRC
+
   TODO: Look into =rustfmt=
