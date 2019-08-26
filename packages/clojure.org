@@ -2,9 +2,10 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
-* Clojure Mode
+* Basic Clojure Support
   Basic install...borrowed from Howard Abrams.
 
+** clojure-mode
   #+BEGIN_SRC emacs-lisp
     (use-package clojure-mode
       :ensure t
@@ -21,6 +22,16 @@
              ("C-c d c" . clojure-cheatsheet)
              ("C-c d d" . dash-at-point)))
   #+END_SRC
+
+** smartparens
+   Originally had this in my Java config, but why not move here where
+   it makes more sense?
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package smartparens
+       :ensure t
+       :init (add-hook 'java-mode-hook 'smartparens-mode))
+   #+END_SRC
 
 * Cider REPL
   The defacto REPL hands down. Borrowing from Howard, but not using
