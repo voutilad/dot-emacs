@@ -13,6 +13,8 @@
    #+BEGIN_SRC emacs-lisp
     (use-package evil
       :ensure t
+      :init
+      (setq evil-want-C-i-jump nil)
       :config
       (evil-mode 1)
 
