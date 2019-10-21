@@ -193,7 +193,12 @@ Welcome to my Emacs config!
       ;; (set-default-font "DejaVu Sans Mono for Powerline 7")
       (if (eq system-type 'darwin)
           (set-frame-font "Fantasque Sans Mono 16")
-        (set-frame-font "Fantasque Sans Mono 8"))
+        (if (eq system-type 'windows-nt)
+            (progn (use-package unicode-fonts
+                     :ensure t
+                     :config (unicode-fonts-setup))
+                   (set-frame-font "Cascadia Code 12"))
+          (set-frame-font "Fantasque Sans Mono 8")))
     #+END_SRC
 
 ** Themes
