@@ -23,30 +23,33 @@
   Since we're using =company-mode=, we must install =company-jedi= and
   not the =jedi= package!
 
+  **NOTE:** _As of 29 Nov 2019 I'm turning this off for awhile._
+  _I should look into LSP-based approaches instead of JEDI._
+
   #+BEGIN_SRC emacs-lisp
     ;; Jedi also needs some special settings to make virtualenv default to Py3
-    (use-package company-jedi
-      :ensure t
-      :init
-      (setq company-jedi-python-bin "python3")
-      (setq jedi:environment-root "jedi")
-      (setq jedi:environment-virtualenv (append python-environment-virtualenv '("--python" "python3")))
-      :config (add-to-list 'company-backends 'company-jedi))
+    ;; (use-package company-jedi
+    ;;   :ensure t
+    ;;   :init
+    ;;   (setq company-jedi-python-bin "python3")
+    ;;   (setq jedi:environment-root "jedi")
+    ;;   (setq jedi:environment-virtualenv (append python-environment-virtualenv '("--python" "python3")))
+    ;;   :config (add-to-list 'company-backends 'company-jedi))
   #+END_SRC
 
   We also need to set some stuff up that's a bit OS dependent. For now
   let's just use what works for my OpenBSD machines.
 
   #+BEGIN_SRC emacs-lisp :results output silent
-    (setq jedi:environment-virtualenv
-          '("virtualenv"))
+    ;; (setq jedi:environment-virtualenv
+    ;;       '("virtualenv"))
 
     ;; This must point to the location the virtualenvs are created,
     ;; not a specific virtualenv itself!
-    (let ((venv-dir (getenv "WORKON_HOME")))
-      (if venv-dir
-          (setq python-environment-directory venv-dir)
-          (message "Please set WORKON_HOME environment variable!")))
+    ;; (let ((venv-dir (getenv "WORKON_HOME")))
+    ;;   (if venv-dir
+    ;;       (setq python-environment-directory venv-dir)
+    ;;       (message "Please set WORKON_HOME environment variable!")))
   #+END_SRC
 
 * TODO Install Elpy???

@@ -11,9 +11,9 @@ Welcome to my Emacs config!
 
   I plan on following these conventions:
 
-  - *Emacs 25+*
+  - *Emacs 26+*
     Decisions are being made based on native functionality in Emacs
-    v25 or greater. Right now, the only core package this config
+    v26 or greater. Right now, the only core package this config
     replaces is =Org= with the latest version since it releases more
     frequently than core Emacs.
 
@@ -205,37 +205,38 @@ Welcome to my Emacs config!
    The default theme isn't too horrible, honestly, but I do prefer
    something other than a white background.
 
-   Let's try out the super popular [[https://github.com/bbatsov/solarized-emacs][solarized-emacs]] theme with some
-   slight tuning.
+   This part is in a state of constant flux...as evident from all the
+   comments and stuff. For now it seems =dracula-theme= is my go-to.
 
    #+BEGIN_SRC emacs-lisp
-    (if (display-graphic-p)
-	 (progn
-	   (use-package dracula-theme
-	     :ensure t
-	     :config)
+     (if (display-graphic-p)
+	  (progn
+	    (use-package dracula-theme
+	      :ensure t
+	      :config)
 
-	   ;; some options available:
-	   ;; make the fringe stand out from the background
-					     ;(setq solarized-distinct-fringe-background t)
+	    ;; some options available:
+	    ;; make the fringe stand out from the background
+					      ;(setq solarized-distinct-fringe-background t)
 
-	   ;; Don't change the font for some headings and titles
-					     ;(setq solarized-use-variable-pitch nil)
+	    ;; Don't change the font for some headings and titles
+					      ;(setq solarized-use-variable-pitch nil)
 
-	   ;; make the modeline high contrast
-					     ;(setq solarized-high-contrast-mode-line t)
+	    ;; make the modeline high contrast
+					      ;(setq solarized-high-contrast-mode-line t)
 
-	   ;; Use less bolding
-					     ;(setq solarized-use-less-bold t)
+	    ;; Use less bolding
+					      ;(setq solarized-use-less-bold t)
 
-	   ;; Use more italics
-					     ;(setq solarized-use-more-italic t)
+	    ;; Use more italics
+					      ;(setq solarized-use-more-italic t)
 
-	   ;; Use less colors for indicators such as git:gutter, flycheck and similar
-					     ;(setq solarized-emphasize-indicators nil)
-	   ;; Don't change size of org-mode headlines (but keep other size-changes)
-	   ;;(setq solarized-scale-org-headlines nil)
-	   (load-theme 'dracula t)))
+	    ;; Use less colors for indicators such as git:gutter, flycheck and similar
+					      ;(setq solarized-emphasize-indicators nil)
+	    ;; Don't change size of org-mode headlines (but keep other size-changes)
+	    ;;(setq solarized-scale-org-headlines nil)
+	    ;(load-theme 'dracula t)
+	    ))
    #+END_SRC
 
 ** User Interface
@@ -371,6 +372,8 @@ Welcome to my Emacs config!
        (when (memq window-system '(mac ns x))
          (exec-path-from-shell-initialize)))
    #+END_SRC
+
+**** TODO Bring some sanity to my Windows config as I'm not always using PuTTY
 
    #+BEGIN_SRC emacs-lisp
      (if (eq window-system 'w32)
@@ -510,6 +513,7 @@ Welcome to my Emacs config!
   #+BEGIN_SRC emacs-lisp
     (setq initial-buffer-choice 'eshell)
   #+END_SRC
+
 * Acknowledgements
   Like almost every Emacs config in existance, this one borrows
   heavily from a few key players.

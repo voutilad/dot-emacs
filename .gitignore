@@ -16,3 +16,4 @@ workspace/
 eclipse.jdt.ls/
 .lsp-session-v1
 var/
+url/
