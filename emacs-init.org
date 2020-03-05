@@ -164,10 +164,11 @@ Welcome to my Emacs config!
    x270. I'm so tired of them.
 
    #+BEGIN_SRC emacs-lisp
-     (global-unset-key (kbd "<prior>"))
-     (global-set-key [(control prior)] 'scroll-down-command)
-     (global-unset-key (kbd "<next>"))
-     (global-set-key [(control next)] 'scroll-up-command)
+     (if (not (eq system-type 'darwin))
+         (progn (global-unset-key (kbd "<prior>"))
+                (global-set-key [(control prior)] 'scroll-down-command)
+                (global-unset-key (kbd "<next>"))
+                (global-set-key [(control next)] 'scroll-up-command)))
    #+END_SRC
 
 * User Interface
@@ -400,12 +401,13 @@ Welcome to my Emacs config!
     #+BEGIN_SRC emacs-lisp
       (use-package company
         :ensure t
+        :hook (prog-mode . company-mode)
         :init
         (setq company-dabbrev-ignore-case t
-              company-show-numbers t)
+              company-show-numbers t
+              company-tooltip-align-annotations t)
         (add-hook 'after-init-hook 'global-company-mode)
-        :config
-        (add-to-list 'company-backends 'company-math-symbols-unicode)
+        :config (add-to-list 'company-backends 'company-math-symbols-unicode)
         :bind ("C-:" . company-complete)
         :diminish company-mode)
     #+END_SRC
@@ -430,11 +432,24 @@ Welcome to my Emacs config!
     #+BEGIN_SRC emacs-lisp
       (use-package flycheck
         :ensure t
-        :init (global-flycheck-mode)
+        :hook (prog-mode . flycheck-mode)
         :config
         (let ((include-paths (list "/usr/include" "/usr/local/include")))
           (setq flycheck-clang-include-path include-paths
                 flycheck-gcc-include-path include-paths)))
+    #+END_SRC
+
+*** LSP Mode
+    All the rage with the kids these days...
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package lsp-mode
+        :ensure t
+        :commands lsp
+        :config (require 'lsp-clients))
+
+      (use-package lsp-ui
+        :ensure t)
     #+END_SRC
 
 *** Undo-Tree
