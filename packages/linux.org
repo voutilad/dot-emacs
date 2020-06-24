@@ -1,0 +1,11 @@
+#+TITLE: Linux (kernel hacking)
+#+Author: Dave Voutila
+#+Email: voutilad@gmail.com
+
+* KConfig Mode
+  Editing KConfig files can be a tad strange. Maybe this helps?
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package kconfig-mode
+      :ensure t)
+  #+END_SRC
