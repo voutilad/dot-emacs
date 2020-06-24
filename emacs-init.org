@@ -199,8 +199,8 @@ Welcome to my Emacs config!
                      :ensure t
                      :config (unicode-fonts-setup))
                    (set-frame-font "Cascadia Code 12"))
-          (cond ((string= (system-name) "minmin")
-                 (set-frame-font "Fantasque Sans Mono 12"))
+          (cond ((string-prefix-p "minmin" (system-name))
+                 (set-frame-font "Fantasque Sans Mono 13"))
                 ((string= (system-name) "Dave-Voutila-t490s")
                  (set-frame-font "Fantasque Sans Mono 14"))
                 (t (set-frame-font "Fantasque Sans Mono 8")))))
