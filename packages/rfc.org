@@ -1,0 +1,15 @@
+#+TITLE: RFC mode
+#+Author: Dave Voutila
+#+Email: voutilad@gmail.com
+
+* RFC Mode
+  Who doesn't like RFCs? This should let me easily browse and read
+  them.
+
+  I'll explicitly set the rfc repo directory, just as a reference.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package rfc-mode
+      :ensure t
+      :init (setq rfc-mode-directory (expand-file-name "~/rfc/")))
+  #+END_SRC
