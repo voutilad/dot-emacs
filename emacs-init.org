@@ -203,7 +203,7 @@ Welcome to my Emacs config!
                  (set-frame-font "Fantasque Sans Mono 13"))
                 ((string= (system-name) "Dave-Voutila-t490s")
                  (set-frame-font "Fantasque Sans Mono 14"))
-                (t (set-frame-font "Fantasque Sans Mono 8")))))
+                (t (set-frame-font "Comic Code 7")))))
     #+END_SRC
 
 ** Themes
