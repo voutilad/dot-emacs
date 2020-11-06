@@ -279,7 +279,8 @@ Welcome to my Emacs config!
         (add-hook 'prog-mode-hook 'linum-mode)
         (add-hook 'linum-mode-hook
                   (lambda ()
-                    (if (eq system-type 'darwin)
+                    (if (or (string-prefix-p "minmin" (system-name))
+                            (eq system-type 'darwin))
                         (set-face-attribute 'linum nil :height 120)
                       (set-face-attribute 'linum nil :height 60)))))
       (setq linum-format "%d ")
@@ -449,8 +450,7 @@ Welcome to my Emacs config!
     #+BEGIN_SRC emacs-lisp
       (use-package lsp-mode
         :ensure t
-        :commands lsp
-        :config (require 'lsp-clients))
+        :commands (lsp lsp-deferred))
 
       (use-package lsp-ui
         :ensure t)
