@@ -33,28 +33,30 @@
   very prone to just taking up a ridiculous amount of screen.
 
   #+BEGIN_SRC emacs-lisp
-        ; First the dependencies
-        (use-package projectile :ensure t)
-        (use-package yasnippet :ensure t)
-        (use-package lsp-mode :ensure t)
-        (use-package hydra :ensure t)
-        (use-package company-lsp :ensure t)
-        (use-package lsp-ui
-          :ensure t
-          :init
-          (setq lsp-ui-doc-enable nil)
-          (setq lsp-ui-sideline-show-code-actions nil))
+    ;; DISABLE THIS FOR NOW, LSP IS GOING A BIT STRANGELY
+    ;; First the dependencies
 
-        (use-package lsp-java
-          :ensure t
-          :init
-          (add-hook 'java-mode-hook #'lsp))
+    ;; (use-package projectile :ensure t)
+    ;; (use-package yasnippet :ensure t)
+    ;; (use-package lsp-mode :ensure t)
+    ;; (use-package hydra :ensure t)
+    ;; (use-package company-lsp :ensure t)
+    ;; (use-package lsp-ui
+    ;;   :ensure t
+    ;;   :init
+    ;;   (setq lsp-ui-doc-enable nil)
+    ;;   (setq lsp-ui-sideline-show-code-actions nil))
 
-        (use-package dap-mode
-          :ensure t :after lsp-mode
-          :config
-          (dap-mode t)
-          (dap-ui-mode t))
+    ;; (use-package lsp-java
+    ;;   :ensure t
+    ;;   :init
+    ;;   (add-hook 'java-mode-hook #'lsp))
 
-        (use-package dap-java :after (lsp-java))
+    ;; (use-package dap-mode
+    ;;   :ensure t :after lsp-mode
+    ;;   :config
+    ;;   (dap-mode t)
+    ;;   (dap-ui-mode t))
+
+    ;; (use-package dap-java :after (lsp-java))
   #+END_SRC
