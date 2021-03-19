@@ -71,10 +71,10 @@
                                     (string-match-p "^/sisu"
                                                     (mu4e-message-field msg
                                                                         :maildir))))
-                    :vars '( ( mu4e-sent-folder       . "/sisu/[sisu].Sent Mail")
-                             ( mu4e-trash-folder      . "/sisu/[sisu].Trash")
-                             ( mu4e-drafts-folder     . "/sisu/[sisu].Drafts")
-                             ( mu4e-refile-folder     . "/sisu/[sisu].All Mail")
+                    :vars '( ( mu4e-sent-folder       . "/[sisu].Sent Mail")
+                             ( mu4e-trash-folder      . "/[sisu].Trash")
+                             ( mu4e-drafts-folder     . "/[sisu].Drafts")
+                             ( mu4e-refile-folder     . "/[sisu].All Mail")
                              ( user-mail-address      . "dave@sisu.io")
                              ( user-full-name         . "Dave Voutila")
                              ( mu4e-compose-signature .
@@ -97,8 +97,8 @@
                     :query "date:today..now"
                     :key ?m)
                   ,(make-mu4e-bookmark
-                    :name  "Sisu Email"
-                    :query "to:dave@sisu.io"
+                    :name  "Starred (flagged)"
+                    :query "flag:flagged"
                     :key ?s)
                   ,(make-mu4e-bookmark
                     :name  "tech@openbsd.org"
@@ -107,7 +107,19 @@
                   ,(make-mu4e-bookmark
                     :name  "misc@openbsd.org"
                     :query "list:misc.openbsd.org"
-                    :key ?M))))
+                    :key ?M)
+                  ,(make-mu4e-bookmark
+                    :name  "ports@openbsd.org"
+                    :query "list:ports.openbsd.org"
+                    :key ?p)
+                  ,(make-mu4e-bookmark
+                    :name "source-changes@openbsd.org"
+                    :query "list:source-changes.openbsd.org"
+                    :key ?S)
+                  ,(make-mu4e-bookmark
+                    :name "bugs@openbsd.org"
+                    :query "list:bugs.openbsd.org"
+                    :key ?B))))
    #+END_SRC
 * Sending Mail
   On OpenBSD, I use the local smtpd components and the local sendmail.
