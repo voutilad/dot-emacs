@@ -203,6 +203,8 @@ Welcome to my Emacs config!
                  (set-frame-font "Comic Code 16"))
                 ((string= (system-name) "Dave-Voutila-t490s")
                  (set-frame-font "Fantasque Sans Mono 14"))
+                ((string-prefix-p "kogelvis2" (system-name))
+                 (set-frame-font "Comic Code 13"))
                 (t (set-frame-font "Comic Code 7")))))
     #+END_SRC
 
@@ -415,19 +417,6 @@ Welcome to my Emacs config!
         :config (add-to-list 'company-backends 'company-math-symbols-unicode)
         :bind ("C-:" . company-complete)
         :diminish company-mode)
-    #+END_SRC
-
-*** Yasnippets
-    Using snippets should make me faster. I've known about these for
-    awhile, but as of now have yet to use them. Let's try them out!
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package yasnippet
-        :ensure t
-        :init
-        (yas-global-mode 1)
-        :config
-        (add-to-list 'yas-snippet-dirs (expand-file-name "snippets" user-emacs-directory)))
     #+END_SRC
 
 *** FlyCheck

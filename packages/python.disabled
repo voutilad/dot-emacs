@@ -2,6 +2,9 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
+* Disabling for now 25-Apr-2021
+  I don't really use this junk.
+
 * Virtual Environments
   Python without virtual environments is the worst. Making Emacs learn
   about them is awesome using [[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper.el]].

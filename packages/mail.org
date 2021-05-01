@@ -71,10 +71,10 @@
                                     (string-match-p "^/sisu"
                                                     (mu4e-message-field msg
                                                                         :maildir))))
-                    :vars '( ( mu4e-sent-folder       . "/[sisu].Sent Mail")
-                             ( mu4e-trash-folder      . "/[sisu].Trash")
-                             ( mu4e-drafts-folder     . "/[sisu].Drafts")
-                             ( mu4e-refile-folder     . "/[sisu].All Mail")
+                    :vars '( ( mu4e-sent-folder       . "/sisu/[sisu].Sent Mail")
+                             ( mu4e-trash-folder      . "/sisu/[sisu].Trash")
+                             ( mu4e-drafts-folder     . "/sisu/[sisu].Drafts")
+                             ( mu4e-refile-folder     . "/sisu/[sisu].All Mail")
                              ( user-mail-address      . "dave@sisu.io")
                              ( user-full-name         . "Dave Voutila")
                              ( mu4e-compose-signature .
@@ -100,6 +100,10 @@
                     :name  "Starred (flagged)"
                     :query "flag:flagged"
                     :key ?s)
+                  ,(make-mu4e-bookmark
+                    :name "hackers@openbsd.org"
+                    :query "list:hackers.openbsd.org"
+                    :key ?H)
                   ,(make-mu4e-bookmark
                     :name  "tech@openbsd.org"
                     :query "list:tech.openbsd.org"
