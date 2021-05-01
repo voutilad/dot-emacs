@@ -90,15 +90,15 @@
          (setq mu4e-bookmarks
                `( ,(make-mu4e-bookmark
                     :name  "Unread Messages"
-                    :query "flag:unread AND NOT flag:trashed"
+                    :query "maildir:/Inbox AND flag:unread AND NOT flag:trashed"
                     :key ?u)
                   ,(make-mu4e-bookmark
                     :name "Today's Messages"
-                    :query "date:today..now"
+                    :query "maildir:/Inbox AND date:today..now"
                     :key ?m)
                   ,(make-mu4e-bookmark
                     :name  "Starred (flagged)"
-                    :query "flag:flagged"
+                    :query "maildir:/Inbox AND flag:flagged"
                     :key ?s)
                   ,(make-mu4e-bookmark
                     :name "hackers@openbsd.org"
@@ -106,23 +106,23 @@
                     :key ?H)
                   ,(make-mu4e-bookmark
                     :name  "tech@openbsd.org"
-                    :query "list:tech.openbsd.org"
+                    :query "maildir:/Inbox AND list:tech.openbsd.org"
                     :key ?T)
                   ,(make-mu4e-bookmark
                     :name  "misc@openbsd.org"
-                    :query "list:misc.openbsd.org"
+                    :query "maildir:/Inbox AND list:misc.openbsd.org"
                     :key ?M)
                   ,(make-mu4e-bookmark
                     :name  "ports@openbsd.org"
-                    :query "list:ports.openbsd.org"
+                    :query "maildir:/Inbox AND list:ports.openbsd.org"
                     :key ?p)
                   ,(make-mu4e-bookmark
                     :name "source-changes@openbsd.org"
-                    :query "list:source-changes.openbsd.org"
+                    :query "maildir:/Inbox AND list:source-changes.openbsd.org"
                     :key ?S)
                   ,(make-mu4e-bookmark
                     :name "bugs@openbsd.org"
-                    :query "list:bugs.openbsd.org"
+                    :query "maildir:/Inbox AND list:bugs.openbsd.org"
                     :key ?B))))
    #+END_SRC
 * Sending Mail
