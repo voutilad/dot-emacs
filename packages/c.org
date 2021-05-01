@@ -31,3 +31,10 @@
       :if (executable-find "pkg-config")
       :ensure t)
   #+END_SRC
+* CMake
+  Sometimes things I work on use CMake.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package cmake-mode
+      :ensure t)
+  #+END_SRC
