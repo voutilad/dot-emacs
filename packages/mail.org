@@ -101,10 +101,6 @@
                     :query "maildir:/Inbox AND flag:flagged"
                     :key ?s)
                   ,(make-mu4e-bookmark
-                    :name "hackers@openbsd.org"
-                    :query "maildir:/Inbox AND list:hackers.openbsd.org"
-                    :key ?H)
-                  ,(make-mu4e-bookmark
                     :name  "tech@openbsd.org"
                     :query "maildir:/Inbox AND list:tech.openbsd.org"
                     :key ?T)
