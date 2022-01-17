@@ -44,14 +44,15 @@
 
   #+BEGIN_SRC emacs-lisp
     (if (string-match "openbsd" system-configuration)
-        (progn
-          (require 'mu4e)
-          (setq mail-user-agent 'mu4e-user-agent
-                mu4e-maildir (expand-file-name "~/.mail")
-                mu4e-attachment-dir "~/Downloads"
-                mu4e-get-mail-command "mbsync -a"
-                mu4e-update-interval 300
-                mu4e-change-filenames-when-moving t)))
+	(progn
+	  (require 'mu4e)
+	  (setq mail-user-agent 'mu4e-user-agent
+		mu4e-maildir (expand-file-name "~/.mail")
+		mu4e-attachment-dir "~/Downloads"
+		mu4e-get-mail-command "mbsync -a"
+		mu4e-update-interval 300
+		mu4e-change-filenames-when-moving t
+		mu4e-view-show-addresses t)))
   #+END_SRC
 
 ** Contexts
@@ -61,24 +62,22 @@
 
    #+BEGIN_SRC emacs-lisp
      (if (string-match "openbsd" system-configuration)
-         (setq mu4e-contexts
-               `(, (make-mu4e-context
-                    :name "Sisu"
-                    :enter-func (lambda () (mu4e-message "Entering Sisu context"))
-                    :leave-func (lambda () (mu4e-message "Leaving Sisu context"))
-                    :match-func (lambda (msg)
-                                  (when msg
-                                    (string-match-p "^/sisu"
-                                                    (mu4e-message-field msg
-                                                                        :maildir))))
-                    :vars '( ( mu4e-sent-folder       . "/[sisu].Sent Mail")
-                             ( mu4e-trash-folder      . "/[sisu].Trash")
-                             ( mu4e-drafts-folder     . "/[sisu].Drafts")
-                             ( mu4e-refile-folder     . "/[sisu].All Mail")
-                             ( user-mail-address      . "dave@sisu.io")
-                             ( user-full-name         . "Dave Voutila")
-                             ( mu4e-compose-signature .
-                                                      (concat "-Dave Voutila")))))))
+	 (setq mu4e-contexts
+	       `(, (make-mu4e-context
+		    :name "Sisu"
+		    :enter-func (lambda () (mu4e-message "Entering Sisu context"))
+		    :leave-func (lambda () (mu4e-message "Leaving Sisu context"))
+		    :match-func (lambda (msg)
+				  (when msg
+				    (string-match-p "^/sisu"
+						    (mu4e-message-field msg
+									:maildir))))
+		    :vars '( ( mu4e-sent-folder       . "/[sisu].Sent Mail")
+			     ( mu4e-trash-folder      . "/[sisu].Trash")
+			     ( mu4e-drafts-folder     . "/[sisu].Drafts")
+			     ( mu4e-refile-folder     . "/[sisu].All Mail")
+			     ( user-mail-address      . "dave@sisu.io")
+			     ( user-full-name         . "Dave Voutila"))))))
    #+END_SRC
 
 ** Bookmarks

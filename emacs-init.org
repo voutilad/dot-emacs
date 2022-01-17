@@ -109,19 +109,6 @@ Welcome to my Emacs config!
       (add-hook 'before-save-hook 'delete-trailing-whitespace)
     #+END_SRC
 
-** Performance Tweaks
-   These tweaks are debatable. Reading the docs, it's not clear if
-   this helps or hurts in general. For now let's play around because
-   if one Emacs user jumps off a garbage collection bridge, you
-   should, too.
-
-   #+BEGIN_SRC emacs-lisp
-     (setq gc-cons-threshold 8000000)
-
-     ;; See https://github.com/wasamasa/dotemacs/blob/master/init.org#gnutls
-     (setq gnutls-min-prime-bits 4096)
-   #+END_SRC
-
 ** Package System
    Now we configure the settings for the package system. Let's prefer
    the bleeding edge stuff.
@@ -132,7 +119,7 @@ Welcome to my Emacs config!
      (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 			      ("melpa" . "http://melpa.org/packages/")))
      (package-initialize)
-     (package-refresh-contents)
+     ;(package-refresh-contents)
    #+END_SRC
 
 *** Use-Package
@@ -175,87 +162,32 @@ Welcome to my Emacs config!
   Pretty important to like what you're staring at all day.
 
 ** Fonts
-   One of the things I change the most is the font. (Fixed-width or
-   GTFO typically.) However it seems Emacs 25 w/ GTK-3 seems to work
-   well using both fixed and variable-width fonts. For instance, my
-   Org headings use variable width and they look ok. Code ends up
-   using fixed-width, which is what I want.
-
-*** If running under Gnome3
-    It seems Emacs under Gnome3 "just works" with proper fonts.
-
-    ** But how do we detect Gnome3? pgrep? **
-
-*** If NOT running under Gnome3
-    If running in say, [[http://man.openbsd.org/cwm][cwm]], we need to set some fonts otherwise it
-    assumes it can figure them out from =~/.Xdefaults=...
+   If running in say, [[http://man.openbsd.org/cwm][cwm]],
+   we need to set some fonts otherwise it
+   assumes it can figure them out from =~/.Xdefaults=...
 
     #+BEGIN_SRC emacs-lisp
       ;; (set-default-font "DejaVu Sans Mono for Powerline 7")
       (if (eq system-type 'darwin)
-          (set-frame-font "Fantasque Sans Mono 16")
-        (if (eq system-type 'windows-nt)
-            (progn (use-package unicode-fonts
-                     :ensure t
-                     :config (unicode-fonts-setup))
-                   (set-frame-font "Cascadia Code 12"))
-          (cond ((string-prefix-p "minmin" (system-name))
-                 (set-frame-font "Comic Code 16"))
-                ((string= (system-name) "Dave-Voutila-t490s")
-                 (set-frame-font "Fantasque Sans Mono 14"))
-                ((string-prefix-p "kogelvis2" (system-name))
-                 (set-frame-font "Comic Code 13"))
-                (t (set-frame-font "Comic Code 7")))))
+	  (set-frame-font "Fantasque Sans Mono 16")
+	(if (eq system-type 'windows-nt)
+	    (progn (use-package unicode-fonts
+		     :ensure t
+		     :config (unicode-fonts-setup))
+		   (set-frame-font "Cascadia Code 12"))
+	  (cond ((string-prefix-p "minmin" (system-name))
+		 (set-frame-font "Comic Code 16"))
+		((string= (system-name) "Dave-Voutila-t490s")
+		 (set-frame-font "Fantasque Sans Mono 14"))
+		((string-prefix-p "kogelvis" (system-name))
+		 (set-frame-font "Comic Code 13"))
+		((string-prefix-p "kogelvis2" (system-name))
+		 (set-frame-font "Comic Code 13"))
+		(t (set-frame-font "Comic Code 7")))))
     #+END_SRC
-
-** Themes
-   The default theme isn't too horrible, honestly, but I do prefer
-   something other than a white background.
-
-   This part is in a state of constant flux...as evident from all the
-   comments and stuff. For now it seems =dracula-theme= is my go-to.
-
-   #+BEGIN_SRC emacs-lisp
-     (if (display-graphic-p)
-	  (progn
-	    (use-package dracula-theme
-	      :ensure t
-	      :config)
-
-	    ;; some options available:
-	    ;; make the fringe stand out from the background
-					      ;(setq solarized-distinct-fringe-background t)
-
-	    ;; Don't change the font for some headings and titles
-					      ;(setq solarized-use-variable-pitch nil)
-
-	    ;; make the modeline high contrast
-					      ;(setq solarized-high-contrast-mode-line t)
-
-	    ;; Use less bolding
-					      ;(setq solarized-use-less-bold t)
-
-	    ;; Use more italics
-					      ;(setq solarized-use-more-italic t)
-
-	    ;; Use less colors for indicators such as git:gutter, flycheck and similar
-					      ;(setq solarized-emphasize-indicators nil)
-	    ;; Don't change size of org-mode headlines (but keep other size-changes)
-	    ;;(setq solarized-scale-org-headlines nil)
-	    ;(load-theme 'dracula t)
-	    ))
-   #+END_SRC
 
 ** User Interface
    Now we tune some of the stuff we see and interact with in the UI.
-
-*** Spaces, not Tabs!
-    Don't get me started...
-
-    #+BEGIN_SRC emacs-lisp
-      (setq-default indent-tabs-mode nil)
-      (setq tab-width 2)
-    #+END_SRC
 
 *** No bars or bells!
    Turn off stuff we don't need.
@@ -277,15 +209,15 @@ Welcome to my Emacs config!
 
     #+BEGIN_SRC emacs-lisp
       (use-package linum
-        :init
-        (add-hook 'prog-mode-hook 'linum-mode)
-        (add-hook 'linum-mode-hook
-                  (lambda ()
-                    (if (or (string-prefix-p "minmin" (system-name))
-                            (eq system-type 'darwin))
-                        (set-face-attribute 'linum nil :height 120)
-                      (set-face-attribute 'linum nil :height 60)))))
-      (setq linum-format "%d ")
+	:init
+	(add-hook 'prog-mode-hook 'linum-mode)
+	(add-hook 'linum-mode-hook
+		  (lambda ()
+		    (if (or (string-prefix-p "minmin" (system-name))
+			    (eq system-type 'darwin))
+			(set-face-attribute 'linum nil :height 120)
+		      (set-face-attribute 'linum nil :height 50)))))
+      (setq linum-format "%5d")
     #+END_SRC
 
 *** Auto-fill (aka wrapping)
@@ -309,27 +241,6 @@ Welcome to my Emacs config!
 		       :ensure t
 		       :config
 		       (sml/setup)))
-    #+END_SRC
-
-*** Whitespace
-    Try out whitespace mode. Borrowed from Howard Abrams. It does what
-    you'd expect: highlights whitespace and hidden characters. Great
-    for sniping rogue tabs!
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package whitespace
-        :ensure t
-        :bind ("C-c T w" . whitespace-mode)
-        :init
-        (setq whitespace-line-column nil
-              whitespace-display-mappings '((space-mark 32 [183] [46])
-                                            (newline-mark 10 [9166 10])
-                                            (tab-mark 9 [9654 9] [92 9])))
-        :config
-        (set-face-attribute 'whitespace-space       nil :foreground "#666666" :background nil)
-        (set-face-attribute 'whitespace-newline     nil :foreground "#666666" :background nil)
-        (set-face-attribute 'whitespace-indentation nil :foreground "#666666" :background nil)
-        :diminish whitespace-mode)
     #+END_SRC
 
 *** Know which column you're in
@@ -431,18 +342,6 @@ Welcome to my Emacs config!
         (let ((include-paths (list "/usr/include" "/usr/local/include")))
           (setq flycheck-clang-include-path include-paths
                 flycheck-gcc-include-path include-paths)))
-    #+END_SRC
-
-*** LSP Mode
-    All the rage with the kids these days...
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package lsp-mode
-        :ensure t
-        :commands (lsp lsp-deferred))
-
-      (use-package lsp-ui
-        :ensure t)
     #+END_SRC
 
 *** Undo-Tree
