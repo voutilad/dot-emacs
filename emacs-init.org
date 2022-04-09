@@ -201,8 +201,8 @@ Welcome to my Emacs config!
                    (set-frame-font "Cascadia Code 12"))
           (cond ((string-prefix-p "minmin" (system-name))
                  (set-frame-font "Comic Code 16"))
-                ((string= (system-name) "Dave-Voutila-t490s")
-                 (set-frame-font "Fantasque Sans Mono 14"))
+                ((string= (system-name) "neo4j-t490s")
+                 (set-frame-font "Comic Code 13"))
                 ((string-prefix-p "kogelvis2" (system-name))
                  (set-frame-font "Comic Code 13"))
                 (t (set-frame-font "Comic Code 7")))))
@@ -457,6 +457,8 @@ Welcome to my Emacs config!
         (global-undo-tree-mode 1)
         :config
         (defalias 'redo 'undo-tree-redo)
+        :custom
+        (undo-tree-auto-save-history nil "disable autosaving undo history")
         :bind (("C-z" . undo)     ; Zap to character isn't helpful
                ("C-S-z" . redo)))
     #+END_SRC
