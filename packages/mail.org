@@ -2,40 +2,11 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
-* TODO Configure System Packages
-   This needs to sanity checking, but for =OpenBSD= I think we need at
-   least the following copmonents.
-
-** TODO mbsync
-   Really from the package =isync=. It handles IMAP synchronization
-   for us.
-
-   #+BEGIN_SRC shell
-     doas pkg_add isync
-   #+END_SRC
-
-   It needs some dual-mailbox configuration (see <reference .mbsyncrc
-   in dotfiles>).
-
-** mu
-   It provides the Emacs package =mu4e=, but we need the critical
-   system program that builds the index behind the scenes.
-
-   #+BEGIN_SRC shell
-     doas pkg_add mu
-   #+END_SRC
-
 * mu4e
   This config gets rather complicated, so I'm breaking it down a bit.
 
-** Install =mu4e=
-
-  Now we're going to install the package and configure the simple
-  stuff. First our default email name/address then our basic =mu4e=
-  settings.
-
   #+BEGIN_SRC emacs-lisp
-    (setq user-mail-address "dave@sisu.io"
+    (setq user-mail-address "dv@sisu.io"
           user-full-name "Dave Voutila")
   #+END_SRC
 
@@ -47,39 +18,11 @@
         (progn
           (require 'mu4e)
           (setq mail-user-agent 'mu4e-user-agent
-                mu4e-maildir (expand-file-name "~/.mail")
+                mu4e-maildir (expand-file-name "~/Maildir")
                 mu4e-attachment-dir "~/Downloads"
-                mu4e-get-mail-command "mbsync -a"
-                mu4e-update-interval 300
+                mu4e-update-interval 120
                 mu4e-change-filenames-when-moving t)))
   #+END_SRC
-
-** Contexts
-   We use /contexts/ to switch between different email accounts for
-   sending purposes. I'm still getting my head around this, but this
-   has been somewhat working so far.
-
-   #+BEGIN_SRC emacs-lisp
-     (if (string-match "openbsd" system-configuration)
-         (setq mu4e-contexts
-               `(, (make-mu4e-context
-                    :name "Sisu"
-                    :enter-func (lambda () (mu4e-message "Entering Sisu context"))
-                    :leave-func (lambda () (mu4e-message "Leaving Sisu context"))
-                    :match-func (lambda (msg)
-                                  (when msg
-                                    (string-match-p "^/sisu"
-                                                    (mu4e-message-field msg
-                                                                        :maildir))))
-                    :vars '( ( mu4e-sent-folder       . "/[sisu].Sent Mail")
-                             ( mu4e-trash-folder      . "/[sisu].Trash")
-                             ( mu4e-drafts-folder     . "/[sisu].Drafts")
-                             ( mu4e-refile-folder     . "/[sisu].All Mail")
-                             ( user-mail-address      . "dave@sisu.io")
-                             ( user-full-name         . "Dave Voutila")
-                             ( mu4e-compose-signature .
-                                                      (concat "-Dave Voutila")))))))
-   #+END_SRC
 
 ** Bookmarks
    Since =mu4e= uses search queries to dictate your view into your
@@ -88,39 +31,35 @@
    #+BEGIN_SRC emacs-lisp
      (if (string-match "openbsd" system-configuration)
          (setq mu4e-bookmarks
-               `( ,(make-mu4e-bookmark
-                    :name  "Unread Messages"
-                    :query "maildir:/Inbox AND flag:unread AND NOT flag:trashed"
+               '((  :name  "Unread Messages"
+                    :query "maildir:/ AND flag:unread AND NOT flag:trashed"
                     :key ?u)
-                  ,(make-mu4e-bookmark
-                    :name "Today's Messages"
-                    :query "maildir:/Inbox AND date:today..now"
+                 (  :name "Today's Messages"
+                    :query "maildir:/ AND date:today..now"
                     :key ?m)
-                  ,(make-mu4e-bookmark
-                    :name  "Starred (flagged)"
-                    :query "maildir:/Inbox AND flag:flagged"
+                 (  :name  "Starred (flagged)"
+                    :query "maildir:/ AND flag:flagged"
                     :key ?s)
-                  ,(make-mu4e-bookmark
-                    :name  "tech@openbsd.org"
-                    :query "maildir:/Inbox AND list:tech.openbsd.org"
+                 (  :name  "tech@openbsd.org"
+                    :query "maildir:/ AND list:tech.openbsd.org"
                     :key ?T)
-                  ,(make-mu4e-bookmark
-                    :name  "misc@openbsd.org"
-                    :query "maildir:/Inbox AND list:misc.openbsd.org"
+                 (  :name  "misc@openbsd.org"
+                    :query "maildir:/ AND list:misc.openbsd.org"
                     :key ?M)
-                  ,(make-mu4e-bookmark
-                    :name  "ports@openbsd.org"
-                    :query "maildir:/Inbox AND list:ports.openbsd.org"
+                 (  :name  "ports@openbsd.org"
+                    :query "maildir:/ AND list:ports.openbsd.org"
                     :key ?p)
-                  ,(make-mu4e-bookmark
-                    :name "source-changes@openbsd.org"
-                    :query "maildir:/Inbox AND list:source-changes.openbsd.org"
+                 (  :name "source-changes@openbsd.org"
+                    :query "maildir:/ AND list:source-changes.openbsd.org"
                     :key ?S)
-                  ,(make-mu4e-bookmark
-                    :name "bugs@openbsd.org"
-                    :query "maildir:/Inbox AND list:bugs.openbsd.org"
-                    :key ?B))))
+                 (  :name "bugs@openbsd.org"
+                    :query "maildir:/ AND list:bugs.openbsd.org"
+                    :key ?B)
+                 (  :name "Drafts"
+                    :query "maildir:/drafts"
+                    :key ?D))))
    #+END_SRC
+
 * Sending Mail
   On OpenBSD, I use the local smtpd components and the local sendmail.
 
