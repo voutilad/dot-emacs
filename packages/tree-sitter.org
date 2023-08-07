@@ -1,0 +1,28 @@
+#+TITLE: Tree-sitter
+#+Author: Dave Voutila
+#+Email: voutilad@gmail.com
+
+* Tree-sitter
+  Guided by [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Howto get Started with Tree-Sitter]].
+
+  #+BEGIN_SRC emacs-lisp
+    ;; just our source list
+    (setq treesit-language-source-alist
+          '((c "https://github.com/tree-sitter/tree-sitter-c")
+            (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+            (bash "https://github.com/tree-sitter/tree-sitter-bash")
+            (cmake "https://github.com/uyha/tree-sitter-cmake")
+            (css "https://github.com/tree-sitter/tree-sitter-css")
+            (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+            (go "https://github.com/tree-sitter/tree-sitter-go")
+            (html "https://github.com/tree-sitter/tree-sitter-html")
+            (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+            (json "https://github.com/tree-sitter/tree-sitter-json")
+            (make "https://github.com/alemuller/tree-sitter-make")
+            (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+            (python "https://github.com/tree-sitter/tree-sitter-python")
+            (toml "https://github.com/tree-sitter/tree-sitter-toml")
+            (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+    ;; install the languages
+    (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+  #+END_SRC
