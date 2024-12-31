@@ -20,84 +20,6 @@
                     (statement-cont . *))
                    (indent-tabs-mode . t)))
 
-    (c-add-style "redpanda"
-                 '((c-basic-offset . 2)
-                   (c-offsets-alist
-                    (knr-argdecl-intro . +)
-                    (substatement-open . +)
-                    (substatement-label . 2)
-                    (label . 2)
-                    (inline-open . +)
-                    (inexpr-class . +)
-                    (defun-open . 0)
-                    (class-open . 0)
-                    (class-close . 0)
-                    (func-decl-cont . +)
-                    (knr-argdecl . 0)
-                    (annotation-top-cont . 0)
-                    (annotation-var-cont . +)
-                    (member-init-cont . c-lineup-multi-inher)
-                    (inher-intro . +)
-                    (block-open . 0)
-                    (brace-list-open . 0)
-                    (statement-case-intro . +)
-                    (statement-case-open . 0)
-                    (substatement . +)
-                    (case-label . 0)
-                    (access-label . -)
-                    (do-while-closure . 0)
-                    (else-clause . 0)
-                    (catch-clause . 0)
-                    (stream-op . c-lineup-streamop)
-                    (inclass . +)
-                    (cpp-macro-cont . +)
-                    (cpp-define-intro c-lineup-cpp-define +)
-                    (friend . 0)
-                    (objc-method-intro .
-                                       [0])
-                    (objc-method-args-cont . c-lineup-ObjC-method-args)
-                    (objc-method-call-cont c-lineup-ObjC-method-call-colons
-                                           c-lineup-ObjC-method-call +)
-                    (extern-lang-open . 0)
-                    (namespace-open . 0)
-                    (module-open . 0)
-                    (composition-open . 0)
-                    (extern-lang-close . 0)
-                    (module-close . 0)
-                    (composition-close . 0)
-                    (inextern-lang . +)
-                    (inmodule . +)
-                    (incomposition . +)
-                    (template-args-cont c-lineup-template-args +)
-                    (inlambda . 0)
-                    (lambda-intro-cont . +)
-                    (inexpr-statement . +)
-                    (topmost-intro . 0)
-                    (topmost-intro-cont . 0)
-                    (arglist-intro . +)
-                    (arglist-cont . 0)
-                    (defun-block-intro . ++)
-                    (statement . 0)
-                    (statement-block-intro . ++)
-                    (block-close . 0)
-                    (inline-close . 0)
-                    (defun-close . 0)
-                    (member-init-intro . +)
-                    (statement-cont . +)
-                    (innamespace . 0)
-                    (namespace-close . 0)
-                    (brace-list-intro . +)
-                    (brace-list-entry . 0)
-                    (brace-entry-open . 0)
-                    (brace-list-close . 0)
-                    (c . c-lineup-C-comments)
-                    (inher-cont . c-lineup-multi-inher)
-                    (string . -1000)
-                    (comment-intro . c-lineup-comment)
-                    (arglist-cont-nonempty . c-lineup-arglist)
-                    (arglist-close . c-lineup-close-paren)
-                    (cpp-macro . -1000))))
-
     (setq c-default-style "openbsd")
   #+END_SRC
 
@@ -124,4 +46,14 @@
   #+BEGIN_SRC emacs-lisp
     (use-package clang-format
       :ensure t)
+  #+END_SRC
+
+* simpc
+  rexim's far simpler and faster mode: https://github.com/rexim/simpc-mode.
+
+  #+BEGIN_SRC emacs-lisp
+    (load
+     (expand-file-name "packages/simpc/simpc-mode.el" user-emacs-directory))
+
+    (add-to-list 'auto-mode-alist '("\\.[ch]\\'" . simpc-mode))
   #+END_SRC
