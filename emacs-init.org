@@ -109,19 +109,6 @@ Welcome to my Emacs config!
       (add-hook 'before-save-hook 'delete-trailing-whitespace)
     #+END_SRC
 
-** Performance Tweaks
-   These tweaks are debatable. Reading the docs, it's not clear if
-   this helps or hurts in general. For now let's play around because
-   if one Emacs user jumps off a garbage collection bridge, you
-   should, too.
-
-   #+BEGIN_SRC emacs-lisp
-     (setq gc-cons-threshold 8000000)
-
-     ;; See https://github.com/wasamasa/dotemacs/blob/master/init.org#gnutls
-     (setq gnutls-min-prime-bits 4096)
-   #+END_SRC
-
 ** Package System
    Now we configure the settings for the package system. Let's prefer
    the bleeding edge stuff.
@@ -135,42 +122,6 @@ Welcome to my Emacs config!
      (package-refresh-contents)
    #+END_SRC
 
-*** Use-Package
-    I've never really tried this, but borrowing from [[https://github.com/howardabrams/dot-files/blob/master/emacs.org#use-package][Howard Abrams'
-    example]] let's make sure we install it before jumping to other
-    files.
-
-    #+BEGIN_SRC emacs-lisp
-      (unless (package-installed-p 'use-package)
-	(package-refresh-contents)
-	(package-install 'use-package))
-
-      (require 'use-package)
-    #+END_SRC
-
-*** Diminish and Bind-Key
-    These add some extra support to =use-package= and are used in the
-    configuration downstream.
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package diminish
-        :ensure t)
-      (use-package bind-key
-        :ensure t)
-    #+END_SRC
-
-** Global Key Map
-   Right now I *loathe* the Page Up and Page Down keys on this Lenovo
-   x270. I'm so tired of them.
-
-   #+BEGIN_SRC emacs-lisp
-     (if (not (eq system-type 'darwin))
-         (progn (global-unset-key (kbd "<prior>"))
-                (global-set-key [(control prior)] 'scroll-down-command)
-                (global-unset-key (kbd "<next>"))
-                (global-set-key [(control next)] 'scroll-up-command)))
-   #+END_SRC
-
 * User Interface
   Pretty important to like what you're staring at all day.
 
@@ -181,17 +132,7 @@ Welcome to my Emacs config!
    Org headings use variable width and they look ok. Code ends up
    using fixed-width, which is what I want.
 
-*** If running under Gnome3
-    It seems Emacs under Gnome3 "just works" with proper fonts.
-
-    ** But how do we detect Gnome3? pgrep? **
-
-*** If NOT running under Gnome3
-    If running in say, [[http://man.openbsd.org/cwm][cwm]], we need to set some fonts otherwise it
-    assumes it can figure them out from =~/.Xdefaults=...
-
     #+BEGIN_SRC emacs-lisp
-      ;; (set-default-font "DejaVu Sans Mono for Powerline 7")
       (if (eq system-type 'darwin)
           (set-frame-font "Fantasque Sans Mono 16")
         (if (eq system-type 'windows-nt)
@@ -201,11 +142,11 @@ Welcome to my Emacs config!
                    (set-frame-font "Cascadia Code 12"))
           (cond ((string-prefix-p "minmin" (system-name))
                  (set-frame-font "Comic Code 16"))
-                ((string= (system-name) "neo4j-t490s")
-                 (set-frame-font "Comic Code 13"))
                 ((string-prefix-p "kogelvis2" (system-name))
                  (set-frame-font "Comic Code 13"))
-                (t (set-frame-font "Comic Code 7")))))
+                ((string-prefix-p "carbonara" (system-name))
+                 (set-frame-font "Comic Code 8"))
+                (t (set-frame-font "Comic Code 10")))))
     #+END_SRC
 
 ** Themes
@@ -219,31 +160,8 @@ Welcome to my Emacs config!
      (if (display-graphic-p)
 	  (progn
 	    (use-package dracula-theme
-	      :ensure t
-	      :config)
-
-	    ;; some options available:
-	    ;; make the fringe stand out from the background
-					      ;(setq solarized-distinct-fringe-background t)
-
-	    ;; Don't change the font for some headings and titles
-					      ;(setq solarized-use-variable-pitch nil)
-
-	    ;; make the modeline high contrast
-					      ;(setq solarized-high-contrast-mode-line t)
-
-	    ;; Use less bolding
-					      ;(setq solarized-use-less-bold t)
-
-	    ;; Use more italics
-					      ;(setq solarized-use-more-italic t)
-
-	    ;; Use less colors for indicators such as git:gutter, flycheck and similar
-					      ;(setq solarized-emphasize-indicators nil)
-	    ;; Don't change size of org-mode headlines (but keep other size-changes)
-	    ;;(setq solarized-scale-org-headlines nil)
-	    ;(load-theme 'dracula t)
-	    ))
+	      :ensure t)
+	    (load-theme 'dracula t)))
    #+END_SRC
 
 ** User Interface
@@ -271,65 +189,14 @@ Welcome to my Emacs config!
    #+END_SRC
 
 *** Line Numbering
-    Using a simple config for now. This will need some tuning most
-    likely. Borrowing from Howard Abrams, idea is to trigger it only
-    when in a programming mode.
+    Using a simple(r) config.
 
     #+BEGIN_SRC emacs-lisp
-      (use-package linum
-        :init
-        (add-hook 'prog-mode-hook 'linum-mode)
-        (add-hook 'linum-mode-hook
-                  (lambda ()
-                    (if (or (string-prefix-p "minmin" (system-name))
-                            (eq system-type 'darwin))
-                        (set-face-attribute 'linum nil :height 120)
-                      (set-face-attribute 'linum nil :height 60)))))
-      (setq linum-format "%d ")
-    #+END_SRC
+      (setq display-line-numbers 'relative)
+      (global-display-line-numbers-mode 1)
 
-*** Auto-fill (aka wrapping)
-    Wrapping at 80 chars is the polite thing to do most of time. This
-    is a hill I'm willing to die on.
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package fill
-        :bind (("C-c T f" . auto-fill-mode)
-               ("C-c T t" . toggle-truncate-lines))
-        :init (add-hook 'org-mode-hook 'turn-on-auto-fill)
-        :diminish auto-fill-mode)
-    #+END_SRC
-
-*** Smart Mode Line
-    Let's give [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] a shot.
-
-    #+BEGIN_SRC emacs-lisp
-      (if (display-graphic-p)
-	  (use-package smart-mode-line
-		       :ensure t
-		       :config
-		       (sml/setup)))
-    #+END_SRC
-
-*** Whitespace
-    Try out whitespace mode. Borrowed from Howard Abrams. It does what
-    you'd expect: highlights whitespace and hidden characters. Great
-    for sniping rogue tabs!
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package whitespace
-        :ensure t
-        :bind ("C-c T w" . whitespace-mode)
-        :init
-        (setq whitespace-line-column nil
-              whitespace-display-mappings '((space-mark 32 [183] [46])
-                                            (newline-mark 10 [9166 10])
-                                            (tab-mark 9 [9654 9] [92 9])))
-        :config
-        (set-face-attribute 'whitespace-space       nil :foreground "#666666" :background nil)
-        (set-face-attribute 'whitespace-newline     nil :foreground "#666666" :background nil)
-        (set-face-attribute 'whitespace-indentation nil :foreground "#666666" :background nil)
-        :diminish whitespace-mode)
+      ;; disable in eshell, though
+      (add-hook 'eshell-mode-hook (lambda () (display-line-numbers-mode 0)))
     #+END_SRC
 
 *** Know which column you're in
@@ -348,17 +215,6 @@ Welcome to my Emacs config!
 
     #+BEGIN_SRC emacs-lisp
       (setq confirm-kill-emacs 'yes-or-no-p)
-    #+END_SRC
-
-*** Start fullscreen
-    I like fullscreen, but I do prefer to keep some of the desktop
-    manager crap visible for now. Maybe someday I'll ditch it again
-    (if I leave Gnome3).
-
-    #+BEGIN_SRC emacs-lisp
-      ;; Usually on macOS I'm on a huge screen
-      (if (not (eq system-type 'darwin))
-          (toggle-frame-maximized))
     #+END_SRC
 
 * Package Configuration
@@ -401,105 +257,14 @@ Welcome to my Emacs config!
    These are packages that are either general purpose, global tools or
    basically minor modes used by language-specific major modes.
 
-*** Company Mode
-    I'm sure I've had this installed and configured in other setups
-    and never figured out how to tune it!
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package company
-        :ensure t
-        :hook (prog-mode . company-mode)
-        :init
-        (setq company-dabbrev-ignore-case t
-              company-show-numbers t
-              company-tooltip-align-annotations t)
-        (add-hook 'after-init-hook 'global-company-mode)
-        :config (add-to-list 'company-backends 'company-math-symbols-unicode)
-        :bind ("C-:" . company-complete)
-        :diminish company-mode)
-    #+END_SRC
-
-*** FlyCheck
-    Ubiquitous syntax and sanity checker. Simple config for now
-    borrowed from the [[https://github.com/flycheck/flycheck/blob/master/doc/user/installation.rst#use-package][installation docs]].
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package flycheck
-        :ensure t
-        :hook (prog-mode . flycheck-mode)
-        :config
-        (let ((include-paths (list "/usr/include" "/usr/local/include")))
-          (setq flycheck-clang-include-path include-paths
-                flycheck-gcc-include-path include-paths)))
-    #+END_SRC
-
-*** LSP Mode
-    All the rage with the kids these days...
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package lsp-mode
-        :ensure t
-        :commands (lsp lsp-deferred))
-
-      (use-package lsp-ui
-        :ensure t)
-    #+END_SRC
-
-*** Undo-Tree
-    While this often confuses me in how it generates its "tree", it's
-    a life saver at times.
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package undo-tree
-        :ensure t
-        :diminish undo-tree-mode
-        :init
-        (global-undo-tree-mode 1)
-        :config
-        (defalias 'redo 'undo-tree-redo)
-        :custom
-        (undo-tree-auto-save-history nil "disable autosaving undo history")
-        :bind (("C-z" . undo)     ; Zap to character isn't helpful
-               ("C-S-z" . redo)))
-    #+END_SRC
-
 *** IDO
     I swear sometimes this gives my system fits, but for now let's
     turn it on everywhere to save some typing.
 
     #+BEGIN_SRC emacs-lisp
-      (use-package ido
-        :ensure t
-        :init  (setq ido-enable-flex-matching t
-                     ido-ignore-extensions t
-                     ido-use-virtual-buffers t
-                     ido-everywhere t)
-        :config
-        (ido-mode 1)
-        (ido-everywhere 1)
-        (add-to-list 'completion-ignored-extensions ".pyc")
-        (setq ido-auto-merge-work-directories-length -1
-              ido-auto-merge-delay-time 3000))
-    #+END_SRC
-
-    Turns out [[./packages/magit.org][magit]] benefits from an IDO extension called
-    =ido-completing-read+=. It adds IDO support to a bunch of native
-    emacs stuff like the =M-x= modeline interface.
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package ido-completing-read+
-        :ensure t
-        :config
-        (ido-ubiquitous-mode 1))
-    #+END_SRC
-
-*** Tags
-    I still don't quite understand how all these things work, but it
-    seems =ctags= is the basis.
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package etags
-         :init (setq tags-revert-without-query 1))
+      (require 'ido)
+      (ido-mode t)
+      (ido-everywhere t)
     #+END_SRC
 
 ** Specific Package Configurations

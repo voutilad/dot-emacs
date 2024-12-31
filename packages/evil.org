@@ -20,7 +20,6 @@
 
       ;; Let's not bother with Evil in *every* mode...
       (dolist (mode '(ag-mode
-		      flycheck-error-list-mode
 		      git-rebase-mode))
 	(add-to-list 'evil-emacs-state-modes mode)))
   #+END_SRC
