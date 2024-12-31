@@ -28,7 +28,7 @@
 
   #+BEGIN_SRC emacs-lisp
     (load
-     (expand-file-name "packages/simpc/simpc-mode.el" user-emacs-directory))
+     (expand-file-name "vendor/simpc/simpc-mode.el" user-emacs-directory))
 
     (add-to-list 'auto-mode-alist '("\\.[ch]\\'" . simpc-mode))
   #+END_SRC
