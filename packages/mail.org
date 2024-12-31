@@ -14,7 +14,8 @@
   do is require it. (Unless we're using Homebrew on macOS.)
 
   #+BEGIN_SRC emacs-lisp
-    (if (string-match "openbsd" system-configuration)
+    (if (and (string-match "openbsd" system-configuration)
+             (string-prefix-p "mars" (system-name)))
         (progn
           (require 'mu4e)
           (setq mail-user-agent 'mu4e-user-agent
