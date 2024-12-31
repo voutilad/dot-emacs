@@ -1,0 +1,37 @@
+#+TITLE: OCaml
+#+Author: Dave Voutila
+#+Email: voutilad@gmail.com
+
+* tuareg
+  This makes things nice?
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package tuareg
+      :ensure t
+      :mode (("\\.ocamlinit\\'" . tuareg-mode)))
+  #+END_SRC
+
+* Dune
+  Support working with Dune projects.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package dune
+       :ensure t)
+  #+END_SRC
+
+* Merlin
+  Apparently this is like the go-to editor integration.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package merlin
+      :ensure t
+      :config
+      (add-hook 'tuareg-mode-hook #'merlin-mode)
+      (add-hook 'merlin-mode-hook #'company-mode)
+      ;; Use flycheck instead.
+      (setq merlin-error-after-save nil))
+
+    (use-package flycheck-ocaml
+      :ensure t
+      :config (flycheck-ocaml-setup))
+  #+END_SRC
