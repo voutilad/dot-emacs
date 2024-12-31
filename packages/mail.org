@@ -33,7 +33,7 @@
      (if (string-match "openbsd" system-configuration)
          (setq mu4e-bookmarks
                '((  :name  "Unread Messages"
-                    :query "maildir:/ AND flag:unread AND NOT flag:trashed"
+                    :query "maildir:/ AND flag:unread AND NOT flag:trashed AND NOT subject:Cron*"
                     :key ?u)
                  (  :name "Today's Messages"
                     :query "maildir:/ AND date:today..now"
