@@ -1,3 +1,12 @@
+;;; simpc-mode.el --- A simple C mode
+
+;; Copyright (C) 2020 Alexey Kutepov <reximkut@gmail.com>
+
+;; Author: Alexey Kutepov <reximkut@gmail.com>
+;;         Dave Voutila <voutilad@gmail.com>
+;; Maintainer: Dave Voutila <voutilad@gmail.com>
+
+;;; Code:
 (require 'subr-x)
 
 (defvar simpc-mode-syntax-table
@@ -61,6 +70,29 @@
       (forward-line -1))
     (thing-at-point 'line t)))
 
+(defun simpc--previous-non-empty-line-2 ()
+  (save-excursion
+    (forward-line -1)
+    (while (and (not (bobp))
+                (string-empty-p
+                 (string-trim-right
+                  (thing-at-point 'line t))))
+      (forward-line -1))
+    (simpc--previous-non-empty-line)))
+
+(defun simpc--indentation-of-previous-ifelse ()
+  (save-excursion
+    (forward-line -1)
+    (while (and (not (bobp))
+                (not (string-match-p
+                      (rx (0+ space) "if"
+                          (0+ space) "("
+                          (+? anything) line-end)
+                      (string-trim-right
+                       (thing-at-point 'line t)))))
+      (forward-line -1))
+    (current-indentation)))
+
 (defun simpc--indentation-of-previous-non-empty-line ()
   (save-excursion
     (forward-line -1)
@@ -71,27 +103,103 @@
       (forward-line -1))
     (current-indentation)))
 
+(defun simpc--indentation-of-open-brace ()
+  "Find the indentation level at the most likely matching open brace."
+  (save-excursion
+    (let ((x 0))
+      (while (and (>= x 0)
+                  (not (bobp)))
+        (forward-line -1)
+        (let* ((line (thing-at-point 'line t))
+               (openings (+ (length (split-string line "{")) -1))
+               (closings (+ (length (split-string line "}")) -1)))
+          (setq x (+ x (- closings openings)))))
+      (current-indentation))))
+
 (defun simpc--desired-indentation ()
   (let* ((cur-line (string-trim-right (thing-at-point 'line t)))
          (prev-line (string-trim-right (simpc--previous-non-empty-line)))
-         (indent-len 4)
-         (prev-indent (simpc--indentation-of-previous-non-empty-line)))
+         (prev-line-2 (string-trim-right (simpc--previous-non-empty-line-2)))
+         (prev-indent-ifelse (simpc--indentation-of-previous-ifelse))
+         (prev-indent (simpc--indentation-of-previous-non-empty-line))
+         (indent-len 8))
+
+    (message "cl: %s\npl: %s\npl2: %s\npi-ifelse: %d"
+             cur-line prev-line prev-line-2 prev-indent-ifelse)
     (cond
-     ((string-match-p "^\\s-*switch\\s-*(.+)" prev-line)
+     ((string-match-p
+       (rx (0+ space) "switch" (+? anything) line-end) prev-line)
       prev-indent)
-     ((and (string-suffix-p "{" prev-line)
-           (string-prefix-p "}" (string-trim-left cur-line)))
-      prev-indent)
+
+
+     ;; ((and (string-suffix-p "{" prev-line)
+     ;;       (string-prefix-p "}" (string-trim-left cur-line)))
+     ;;  prev-indent)
+
+     ;; Identify indent if previous line ends with an open-brace, accounting
+     ;; for multi-line conditionals (if/else/if else).
      ((string-suffix-p "{" prev-line)
-      (+ prev-indent indent-len))
+      (if (eq 0 (% prev-indent indent-len))
+          (+ prev-indent indent-len)
+        (+ prev-indent 4)))
+
+     ;; Outdent a line with just a closing brace, using the indentation of
+     ;; the likely matching opening brace.
      ((string-prefix-p "}" (string-trim-left cur-line))
-      (max (- prev-indent indent-len) 0))
+      (simpc--indentation-of-open-brace))
+
+     ;; Handle switch case's, outdenting or indenting as needed.
      ((string-suffix-p ":" prev-line)
       (if (string-suffix-p ":" cur-line)
           prev-indent
         (+ prev-indent indent-len)))
      ((string-suffix-p ":" cur-line)
       (max (- prev-indent indent-len) 0))
+
+     ;; 1-liner if/else-if's
+     ((string-match-p
+       (rx (0+ space) (or "if" "else if")
+           (0+ space) "(" (+? anything) ")"
+           (0+ space) line-end)
+       prev-line)
+      (+ prev-indent indent-len))
+
+     ((string-match-p
+       (rx (0+ space) "else"
+           (0+ space) line-end)
+       prev-line)
+      (+ prev-indent indent-len))
+
+     ((string-match-p
+       (rx (0+ space) (or "if" "else if")
+           (0+ space) "(" (+? anything) ")"
+           (0+ space) line-end)
+       prev-line-2)
+      prev-indent-ifelse)
+
+     ((string-match-p
+       (rx (0+ space) "else" (0+ space)) prev-line-2)
+      prev-indent-ifelse)
+
+     ;; if/else-if continuations
+     ((string-match-p
+       (rx (0+ space) (or "if" "else if") (1+ space)
+           "(" (+? anything) (0+ space) line-end)
+       prev-line)
+      (+ prev-indent 4))
+     ((string-match-p
+       (rx (1+ space) (+? anything) ")"
+           (0+ space) (0+ "{")
+           (0+ space) line-end)
+       prev-line)
+      (+ prev-indent-ifelse indent-len))
+     ((and (<= 8 prev-indent-ifelse)
+           (string-match-p
+            (rx (+? anything) ")" (0+ space) (0+ "{") (0+ space) line-end)
+            prev-line-2))
+      prev-indent-ifelse)
+
+     ;; Just use previously found indentation.
      (t prev-indent))))
 
 ;;; TODO: customizable indentation (amount of spaces, tabs, etc)
@@ -101,6 +209,7 @@
     (let* ((desired-indentation
             (simpc--desired-indentation))
            (n (max (- (current-column) (current-indentation)) 0)))
+      (indent-tabs-mode nil)
       (indent-line-to desired-indentation)
       (forward-char n))))
 
@@ -112,3 +221,5 @@
   (setq-local comment-start "// "))
 
 (provide 'simpc-mode)
+
+;;; simpc-mode.el ends here
