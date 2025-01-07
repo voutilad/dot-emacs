@@ -155,12 +155,15 @@
      ;;  prev-indent)
 
      ((string-suffix-p "/*" prev-line)
-      (+ prev-indent 1))
+      (progn (message "multi-line comment continuation") (+ prev-indent 1)))
+
+     ((string-prefix-p "* " (string-trim-left prev-line))
+      (progn (message "multi-line comment body") prev-indent))
 
      ((string-suffix-p "*/" prev-line)
-      (let ((x (simpc--indentation-of-open-comment)))
-        (message "x: %d" x)
-        x))
+      (let ((indent (simpc--indentation-of-open-comment)))
+        (message "multi-line comment end")
+        (- prev-indent 1)))
 
      ;; Identify indent if previous line ends with an open-brace, accounting
      ;; for multi-line conditionals (if/else/if else).
