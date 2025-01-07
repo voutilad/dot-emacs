@@ -130,6 +130,7 @@
 (defun simpc--desired-indentation ()
   (let* ((cur-line (string-trim-right (thing-at-point 'line t)))
          (cur-indent (current-indentation))
+         (now (current-time-string))
          (prev-line (string-trim-right (simpc--previous-non-empty-line)))
          (prev-line-2 (string-trim-right (simpc--previous-non-empty-line-2)))
          (prev-indent-ifelse (simpc--indentation-of-previous-ifelse))
@@ -145,9 +146,9 @@
      ;; switch opening
      ((string-match-p
        (rx (0+ space) "switch" (+? anything) line-end) prev-line)
-      (progn (message "switch open") prev-indent))
+      (progn (message "%s: switch open" now)
+             prev-indent))
 
-     ;; TODO: multi-line *-aligned comments
      ;; TODO: multi-line function call (4-space indent)
 
      ;; ((and (string-suffix-p "{" prev-line)
@@ -155,14 +156,16 @@
      ;;  prev-indent)
 
      ((string-suffix-p "/*" prev-line)
-      (progn (message "multi-line comment continuation") (+ prev-indent 1)))
+      (progn (message "%s: multi-line comment cont." now)
+             (+ prev-indent 1)))
 
      ((string-prefix-p "* " (string-trim-left prev-line))
-      (progn (message "multi-line comment body") prev-indent))
+      (progn (message "%s: multi-line comment body" now)
+             prev-indent))
 
      ((string-suffix-p "*/" prev-line)
       (let ((indent (simpc--indentation-of-open-comment)))
-        (message "multi-line comment end")
+        (message "%s: multi-line comment end" now)
         (- prev-indent 1)))
 
      ;; Identify indent if previous line ends with an open-brace, accounting
@@ -173,45 +176,50 @@
      ;;             (+ prev-indent indent-len)
      ;;           (+ prev-indent 4))))
 
-     ((string-suffix-p ";" cur-line) (progn (message "KJKJKJ") prev-indent))
-
-     ((string= "{" prev-line) (progn (message "TKTKT") 8))
+     ;; ((string= "{" prev-line)
+     ;;  (progn (message "%s: after new brace" now) 8))
 
      ((string-suffix-p "{" prev-line)
-      (let ((x (+ prev-indent indent-len)))
-        (message "x = %d" x)
-        x))
+      (progn (message "%s: after open brace" now)
+             (+ prev-indent indent-len)))
 
      ;; Outdent a line with just a closing brace, using the indentation of
      ;; the likely matching opening brace.
      ((and (eq 0 (% cur-indent indent-len))
            (string-prefix-p "}" (string-trim-left cur-line)))
       (let ((x (simpc--indentation-of-open-brace)))
-        (message "xxx: %d %d %d" cur-indent indent-len x)
+        (message "%s: solo closing brace" now)
         (* indent-len (/ x indent-len))))
 
      ;; Handle switch case's, outdenting or indenting as needed.
      ((string-suffix-p ":" prev-line)
       (if (string-suffix-p ":" cur-line)
-          prev-indent
+          (progn (message "%s: fallthrough case" now)
+                 prev-indent)
+        (progn (message "%s: new case" now))
         (+ prev-indent indent-len)))
-
 
      ((string-suffix-p ":" cur-line)
       (max (- prev-indent indent-len) 0))
 
-     ;;; function definition continuation
+;;; function definition continuation
+
      ((string-suffix-p "," prev-line)
-      (progn (message "OH SHIT BRO") (+ prev-indent 4)))
+      (if (< 0 (length (string-trim cur-line)))
+          (progn (message "%s: func def cont. start" now)
+                 (+ prev-indent 4))
+        (progn (message "%s: func def cont. more" now)
+               prev-indent)))
 
      ;; Cheat to deal with stuff already far left aligned, like functions, etc.
      ;; ((and (<= (current-indent) indent-len)
      ;;       (string-suffix-p ")" prev-line))
      ;;  (progn (message "pooooooooP") 0))
 
-     ((and (0 (current-indentation))
+     ((and (= 0 (current-indentation))
            (string-prefix-p "{" cur-line))
-      (progn (message "SUUUUUP DUDE") indent-len))
+      (progn (message "%s: function body begin" now)
+             indent-len))
 
      ;; 1-liner if/else-if's
      ((string-match-p
@@ -219,24 +227,27 @@
            (0+ space) "(" (+? anything) ")"
            (0+ space) line-end)
        prev-line)
-      (+ prev-indent indent-len))
+      (progn (message "%s: one-shot if/else")
+             (+ prev-indent indent-len)))
 
      ((string-match-p
        (rx (0+ space) "else"
            (0+ space) line-end)
        prev-line)
-      (+ prev-indent indent-len))
+      (progn (message "%s: one-shot else" now)
+             (+ prev-indent indent-len)))
 
      ((string-match-p
        (rx (0+ space) (or "if" "else if")
            (0+ space) "(" (+? anything) ")"
            (0+ space) line-end)
        prev-line-2)
-      prev-indent-ifelse)
+      (progn (message "%s: outdent after one-shot if/else" now)
+             prev-indent-ifelse))
 
      ((string-match-p
        (rx (0+ space) "else" (0+ space)) prev-line-2)
-      prev-indent-ifelse)
+      (progn (message "%s: one-shot else" now)) prev-indent-ifelse)
 
      ;;; if/else-if continuations
      ;; Identify if we need to do a half-indent due to open if/else condition
@@ -244,30 +255,32 @@
        (rx (0+ space) (or "if" "else if") (1+ space)
            "(" (+? anything) (0+ space) line-end)
        prev-line)
-      (progn (message "HERE DAWG") (+ prev-indent 4)))
+      (progn (message "%s: if/else cont." now) (+ prev-indent 4)))
 
      ((string-match-p
        (rx line-start (and (not space) (not "{"))) prev-line)
-      (progn (message "CHEAT") 0))
-
+      (progn (message "%s: CHEAT" now) prev-indent))
 
 
      ;; xxxxx
      ((string-match-p
-       (rx (1+ space) (+? anything) ")"
-           (0+ space) (0+ "{")
+       (rx (1+ space) (+? anything) ")" (0+ space) (0+ "{")
            (0+ space) line-end)
        prev-line)
-      (progn (message "poop HERE") (+ prev-indent-ifelse indent-len)))
+      (progn (message "%s: poop HERE" now)
+             (+ prev-indent-ifelse indent-len)))
 
      ((and (<= 8 prev-indent-ifelse)
            (string-match-p
             (rx (+? anything) ")" (0+ space) (0+ "{") (0+ space) line-end)
             prev-line-2))
-      (progn (message "UGH HERE") prev-indent-ifelse))
+      (progn (message "%s: not sure yet" now) prev-indent-ifelse))
+
+     ((string-suffix-p ";" prev-line)
+      (progn (message "%s: new statement" now) prev-indent))
 
      ;; Just use previously found indentation.
-     (t (progn (message "SAMESIES") prev-indent)))))
+     (t (progn (message "%s: default" now) prev-indent)))))
 
 ;;; TODO: customizable indentation (amount of spaces, tabs, etc)
 (defun simpc-indent-line ()
