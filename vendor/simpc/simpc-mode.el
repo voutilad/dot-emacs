@@ -106,55 +106,109 @@
 (defun simpc--indentation-of-open-brace ()
   "Find the indentation level at the most likely matching open brace."
   (save-excursion
+    (forward-line -1)
     (let ((x 0))
       (while (and (>= x 0)
                   (not (bobp)))
-        (forward-line -1)
         (let* ((line (thing-at-point 'line t))
                (openings (+ (length (split-string line "{")) -1))
                (closings (+ (length (split-string line "}")) -1)))
-          (setq x (+ x (- closings openings)))))
+          (setq x (+ x (- closings openings)))
+          (forward-line -1)))
       (current-indentation))))
+
+(defun simpc--indentation-of-open-comment ()
+  "Find the indentation level at the most recent opening C-style comment."
+  (save-excursion
+    (forward-line -1)
+    (while (and (not (bobp))
+                (not (string-suffix-p "/*" (string-trim-right
+                                            (thing-at-point 'line t)))))
+      (forward-line -1))
+    (current-indentation)))
 
 (defun simpc--desired-indentation ()
   (let* ((cur-line (string-trim-right (thing-at-point 'line t)))
+         (cur-indent (current-indentation))
          (prev-line (string-trim-right (simpc--previous-non-empty-line)))
          (prev-line-2 (string-trim-right (simpc--previous-non-empty-line-2)))
          (prev-indent-ifelse (simpc--indentation-of-previous-ifelse))
          (prev-indent (simpc--indentation-of-previous-non-empty-line))
          (indent-len 8))
 
-    (message "cl: %s\npl: %s\npl2: %s\npi-ifelse: %d"
-             cur-line prev-line prev-line-2 prev-indent-ifelse)
+    ;; NOTE: if cur-line == prev-line, user just hit return
+
+    (message
+     "\ncl: %s\npl: %s\npl2: %s\npi-ifelse: %d\ncur-indent: %d, prev: %d"
+     cur-line prev-line prev-line-2 prev-indent-ifelse cur-indent prev-indent)
     (cond
+     ;; switch opening
      ((string-match-p
        (rx (0+ space) "switch" (+? anything) line-end) prev-line)
-      prev-indent)
+      (progn (message "switch open") prev-indent))
 
+     ;; TODO: multi-line *-aligned comments
+     ;; TODO: multi-line function call (4-space indent)
 
      ;; ((and (string-suffix-p "{" prev-line)
      ;;       (string-prefix-p "}" (string-trim-left cur-line)))
      ;;  prev-indent)
 
+     ((string-suffix-p "/*" prev-line)
+      (+ prev-indent 1))
+
+     ((string-suffix-p "*/" prev-line)
+      (let ((x (simpc--indentation-of-open-comment)))
+        (message "x: %d" x)
+        x))
+
      ;; Identify indent if previous line ends with an open-brace, accounting
      ;; for multi-line conditionals (if/else/if else).
+     ;; ((string-suffix-p "{" prev-line)
+     ;;  (progn (message "HEY YO YO")
+     ;;         (if (eq 0 (% prev-indent indent-len))
+     ;;             (+ prev-indent indent-len)
+     ;;           (+ prev-indent 4))))
+
+     ((string-suffix-p ";" cur-line) (progn (message "KJKJKJ") prev-indent))
+
+     ((string= "{" prev-line) (progn (message "TKTKT") 8))
+
      ((string-suffix-p "{" prev-line)
-      (if (eq 0 (% prev-indent indent-len))
-          (+ prev-indent indent-len)
-        (+ prev-indent 4)))
+      (let ((x (+ prev-indent indent-len)))
+        (message "x = %d" x)
+        x))
 
      ;; Outdent a line with just a closing brace, using the indentation of
      ;; the likely matching opening brace.
-     ((string-prefix-p "}" (string-trim-left cur-line))
-      (simpc--indentation-of-open-brace))
+     ((and (eq 0 (% cur-indent indent-len))
+           (string-prefix-p "}" (string-trim-left cur-line)))
+      (let ((x (simpc--indentation-of-open-brace)))
+        (message "xxx: %d %d %d" cur-indent indent-len x)
+        (* indent-len (/ x indent-len))))
 
      ;; Handle switch case's, outdenting or indenting as needed.
      ((string-suffix-p ":" prev-line)
       (if (string-suffix-p ":" cur-line)
           prev-indent
         (+ prev-indent indent-len)))
+
+
      ((string-suffix-p ":" cur-line)
       (max (- prev-indent indent-len) 0))
+
+     ;;; function definition continuation
+     ((string-suffix-p "," prev-line)
+      (progn (message "OH SHIT BRO") (+ prev-indent 4)))
+
+     ;; Cheat to deal with stuff already far left aligned, like functions, etc.
+     ;; ((and (<= (current-indent) indent-len)
+     ;;       (string-suffix-p ")" prev-line))
+     ;;  (progn (message "pooooooooP") 0))
+
+     ((and (0 (current-indentation))
+           (string-prefix-p "{" cur-line))
+      (progn (message "SUUUUUP DUDE") indent-len))
 
      ;; 1-liner if/else-if's
      ((string-match-p
@@ -181,35 +235,45 @@
        (rx (0+ space) "else" (0+ space)) prev-line-2)
       prev-indent-ifelse)
 
-     ;; if/else-if continuations
+     ;;; if/else-if continuations
+     ;; Identify if we need to do a half-indent due to open if/else condition
      ((string-match-p
        (rx (0+ space) (or "if" "else if") (1+ space)
            "(" (+? anything) (0+ space) line-end)
        prev-line)
-      (+ prev-indent 4))
+      (progn (message "HERE DAWG") (+ prev-indent 4)))
+
+     ((string-match-p
+       (rx line-start (and (not space) (not "{"))) prev-line)
+      (progn (message "CHEAT") 0))
+
+
+
+     ;; xxxxx
      ((string-match-p
        (rx (1+ space) (+? anything) ")"
            (0+ space) (0+ "{")
            (0+ space) line-end)
        prev-line)
-      (+ prev-indent-ifelse indent-len))
+      (progn (message "poop HERE") (+ prev-indent-ifelse indent-len)))
+
      ((and (<= 8 prev-indent-ifelse)
            (string-match-p
             (rx (+? anything) ")" (0+ space) (0+ "{") (0+ space) line-end)
             prev-line-2))
-      prev-indent-ifelse)
+      (progn (message "UGH HERE") prev-indent-ifelse))
 
      ;; Just use previously found indentation.
-     (t prev-indent))))
+     (t (progn (message "SAMESIES") prev-indent)))))
 
 ;;; TODO: customizable indentation (amount of spaces, tabs, etc)
 (defun simpc-indent-line ()
   (interactive)
   (when (not (bobp))
-    (let* ((desired-indentation
-            (simpc--desired-indentation))
+    (let* ((desired-indentation (simpc--desired-indentation))
            (n (max (- (current-column) (current-indentation)) 0)))
       (indent-tabs-mode nil)
+      (message ">> indenting to %d" desired-indentation)
       (indent-line-to desired-indentation)
       (forward-char n))))
 
