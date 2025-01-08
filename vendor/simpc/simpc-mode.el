@@ -106,15 +106,15 @@
 (defun simpc--indentation-of-open-brace ()
   "Find the indentation level at the most likely matching open brace."
   (save-excursion
-    (forward-line -1)
     (let ((x 0))
       (while (and (>= x 0)
                   (not (bobp)))
+        (forward-line -1)
         (let* ((line (thing-at-point 'line t))
                (openings (+ (length (split-string line "{")) -1))
                (closings (+ (length (split-string line "}")) -1)))
           (setq x (+ x (- closings openings)))
-          (forward-line -1)))
+          (message ">>> line: %s" line)))
       (current-indentation))))
 
 (defun simpc--indentation-of-open-comment ()
@@ -188,7 +188,7 @@
      ((and (eq 0 (% cur-indent indent-len))
            (string-prefix-p "}" (string-trim-left cur-line)))
       (let ((x (simpc--indentation-of-open-brace)))
-        (message "%s: solo closing brace" now)
+        (message "%s: solo closing brace (x=%d)" now x)
         (* indent-len (/ x indent-len))))
 
      ;; Handle switch case's, outdenting or indenting as needed.
@@ -227,14 +227,14 @@
            (0+ space) "(" (+? anything) ")"
            (0+ space) line-end)
        prev-line)
-      (progn (message "%s: one-shot if/else")
+      (progn (message "%s: one-shot if/else" now)
              (+ prev-indent indent-len)))
 
      ((string-match-p
        (rx (0+ space) "else"
            (0+ space) line-end)
        prev-line)
-      (progn (message "%s: one-shot else" now)
+      (progn (message "%s: one-shot else (1)" now)
              (+ prev-indent indent-len)))
 
      ((string-match-p
@@ -246,8 +246,8 @@
              prev-indent-ifelse))
 
      ((string-match-p
-       (rx (0+ space) "else" (0+ space)) prev-line-2)
-      (progn (message "%s: one-shot else" now)) prev-indent-ifelse)
+       (rx (0+ space) "else" (0+ space) line-end) prev-line-2)
+      (progn (message "%s: one-shot else (2)" now)) prev-indent-ifelse)
 
      ;;; if/else-if continuations
      ;; Identify if we need to do a half-indent due to open if/else condition
