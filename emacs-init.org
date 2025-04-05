@@ -139,7 +139,9 @@ Welcome to my Emacs config!
             (progn (use-package unicode-fonts
                      :ensure t
                      :config (unicode-fonts-setup))
-                   (set-frame-font "Cascadia Code 12"))
+                   (cond ((string-prefix-p "SurfacePro8" (system-name))
+                          (set-frame-font "Comic Code 10"))
+                          (t (set-frame-font "Cascadia Code 12"))))
           (cond ((string-prefix-p "minmin" (system-name))
                  (set-frame-font "Comic Code 16"))
                 ((string-prefix-p "kogelvis2" (system-name))
@@ -193,10 +195,8 @@ Welcome to my Emacs config!
 
     #+BEGIN_SRC emacs-lisp
       (setq display-line-numbers 'relative)
-      (global-display-line-numbers-mode 1)
 
-      ;; disable in eshell, though
-      (add-hook 'eshell-mode-hook (lambda () (display-line-numbers-mode 0)))
+      (add-hook 'prog-mode-hook #'display-line-numbers-mode)
     #+END_SRC
 
 *** Know which column you're in
