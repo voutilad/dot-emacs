@@ -147,7 +147,7 @@ Welcome to my Emacs config!
                 ((string-prefix-p "kogelvis2" (system-name))
                  (set-frame-font "Comic Code 13"))
                 ((string-prefix-p "carbonara" (system-name))
-                 (set-frame-font "Comic Code 8"))
+                 (set-frame-font "Comic Code 7"))
                 (t (set-frame-font "Comic Code 10")))))
     #+END_SRC
 
