@@ -1,0 +1,56 @@
+#+TITLE: Clojure
+#+AUTHOR: Dave Voutila
+#+EMAIL: voutilad@gmail.com
+
+* Basic Clojure Support
+  Basic install...borrowed from Howard Abrams.
+
+** clojure-mode
+  #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
+    (use-package clojure-mode
+      :ensure t
+      :init
+      (defconst clojure--prettify-symbols-alist
+        '(("fn"   . ?λ)
+          ("__"   . ?⁈)))
+
+      :config
+      (add-hook 'clojure-mode-hook 'global-prettify-symbols-mode)
+      :bind (("C-c d f" . cider-code)
+             ("C-c d g" . cider-grimoire)
+             ("C-c d w" . cider-grimoire-web)
+             ("C-c d c" . clojure-cheatsheet)
+             ("C-c d d" . dash-at-point)))
+  #+END_SRC
+
+** smartparens
+   Originally had this in my Java config, but why not move here where
+   it makes more sense?
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package smartparens
+       :ensure t
+       :init (add-hook 'java-mode-hook 'smartparens-mode))
+   #+END_SRC
+
+* Cider REPL
+  The defacto REPL hands down. Borrowing from Howard, but not using
+  =slamhound= yet as I have no use case at the moment.
+
+  #+BEGIN_SRC emacs-lisp
+    ;;;;
+    (use-package cider
+      :ensure t
+      :commands (cider cider-connect cider-jack-in)
+      :init
+      (setq cider-repl-use-clojure-font-lock t
+            cider-repl-wrap-history t
+            cider-repl-history-size 1000
+            ;; Stop error buffer from popping up while working in buffers other than the REPL:
+            nrepl-popup-stacktraces nil
+            ;; CIDER likes to try to bind to IPv6 :: but for some reason Java hates it on OpenBSD
+            cider-lein-parameters "repl :headless :host 127.0.0.1")
+      (add-hook 'cider-repl-mode-hook 'paredit-mode))
+    ;;;
+  #+END_SRC
