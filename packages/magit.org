@@ -8,6 +8,7 @@
   https://github.com/howardabrams/dot-files/blob/master/emacs.org#magit
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (use-package magit
       :ensure t
       :commands magit-status magit-blame

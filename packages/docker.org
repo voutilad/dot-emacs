@@ -6,6 +6,7 @@
   Because sometimes I have to edit these :-/
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (use-package dockerfile-mode
       :ensure t
       :mode ("Dockerfile\\'" . dockerfile-mode))

@@ -8,6 +8,7 @@
   Let's follow the [[https://openbsd.org][OpenBSD]] style format.
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (c-add-style "openbsd"
                  '("bsd"
                    (c-backspace-function . delete-backward-char)
@@ -27,8 +28,9 @@
   rexim's far simpler and faster mode: https://github.com/rexim/simpc-mode.
 
   #+BEGIN_SRC emacs-lisp
-    (load
-     (expand-file-name "vendor/simpc/simpc-mode.el" user-emacs-directory))
+    ;; disable for now
+    ;; (load
+    ;;  (expand-file-name "vendor/simpc/simpc-mode.el" user-emacs-directory))
 
-    (add-to-list 'auto-mode-alist '("\\.[ch]\\'" . simpc-mode))
+    ;; (add-to-list 'auto-mode-alist '("\\.[ch]\\'" . simpc-mode))
   #+END_SRC

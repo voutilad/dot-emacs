@@ -11,6 +11,7 @@
    config.
 
    #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (use-package evil
       :ensure t
       :init

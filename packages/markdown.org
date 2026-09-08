@@ -8,6 +8,7 @@
   anything for it out of the box!
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (use-package markdown-mode
       :ensure t
       :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode))

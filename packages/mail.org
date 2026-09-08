@@ -6,6 +6,7 @@
   This config gets rather complicated, so I'm breaking it down a bit.
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (setq user-mail-address "dv@sisu.io"
           user-full-name "Dave Voutila")
   #+END_SRC

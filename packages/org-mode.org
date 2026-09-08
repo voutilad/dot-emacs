@@ -19,6 +19,7 @@
    These look oh-so-much better.
 
    #+BEGIN_SRC emacs-lisp
+     ;; -*- lexical-binding: t; -*-
      (use-package org-bullets
 	:ensure t
 	:init (add-hook 'org-mode-hook 'org-bullets-mode))

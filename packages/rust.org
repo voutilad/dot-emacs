@@ -6,6 +6,7 @@
   Let's add the authoritative rust mode...
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (use-package rust-mode
       :ensure t
       :init)

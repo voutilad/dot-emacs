@@ -6,6 +6,7 @@
   See http://ppareit.github.io/graphviz-dot-mode/ for details.
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (use-package graphviz-dot-mode
       :ensure t)
   #+END_SRC

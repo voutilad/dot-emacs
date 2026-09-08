@@ -44,6 +44,7 @@ Welcome to my Emacs config!
     See http://whattheemacsd.com/init.el-02.html for more info.
 
     #+BEGIN_SRC emacs-lisp
+      ;; -*- lexical-binding: t; -*-
       (defconst my/backup-dir
         (expand-file-name ".backups" user-emacs-directory))
 

@@ -6,6 +6,7 @@
   Editing KConfig files can be a tad strange. Maybe this helps?
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (use-package kconfig-mode
       :ensure t)
   #+END_SRC

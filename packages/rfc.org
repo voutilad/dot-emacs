@@ -9,6 +9,7 @@
   I'll explicitly set the rfc repo directory, just as a reference.
 
   #+BEGIN_SRC emacs-lisp
+    ;; -*- lexical-binding: t; -*-
     (use-package rfc-mode
       :ensure t
       :init (setq rfc-mode-directory (expand-file-name "~/rfc/")))

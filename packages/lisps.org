@@ -6,6 +6,7 @@
    Because your parentheses should stay in balance lest the world burn!
 
    #+BEGIN_SRC emacs-lisp
+     ;; -*- lexical-binding: t; -*-
      (use-package paredit
        :ensure t
        :diminish "﹙﹚"
