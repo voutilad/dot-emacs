@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; Bootstrap org-mode so we can initialize using org files
 
 ;; I think this is to get rid of that annoying crap Package.el writes here?
