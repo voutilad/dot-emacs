@@ -2,55 +2,68 @@
 #+AUTHOR: Dave Voutila
 #+EMAIL: voutilad@gmail.com
 
-* Basic Clojure Support
-  Basic install...borrowed from Howard Abrams.
+#+BEGIN_SRC emacs-lisp
+;;; init.el --- Emacs configuration -*- lexical-binding: t; -*-
+#+END_SRC
+
+* Clojure Support
 
 ** clojure-mode
-  #+BEGIN_SRC emacs-lisp
-    ;; -*- lexical-binding: t; -*-
-    (use-package clojure-mode
-      :ensure t
-      :init
-      (defconst clojure--prettify-symbols-alist
-        '(("fn"   . ?λ)
-          ("__"   . ?⁈)))
+   Major modes for Clojure, ClojureScript, and EDN.
 
-      :config
-      (add-hook 'clojure-mode-hook 'global-prettify-symbols-mode)
-      :bind (("C-c d f" . cider-code)
-             ("C-c d g" . cider-grimoire)
-             ("C-c d w" . cider-grimoire-web)
-             ("C-c d c" . clojure-cheatsheet)
-             ("C-c d d" . dash-at-point)))
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package clojure-mode
+       :ensure t
+       :hook (clojure-mode . prettify-symbols-mode)
+       :config
+       (setq clojure-mode-pretty-symbols-alist
+             '(("fn" . ?λ))))
+   #+END_SRC
 
-** smartparens
-   Originally had this in my Java config, but why not move here where
-   it makes more sense?
+** Structural Editing
+   Strict Smartparens with Evil integration for Clojure.
+   Ordinary Smartparens for Java.
 
    #+BEGIN_SRC emacs-lisp
      (use-package smartparens
        :ensure t
-       :init (add-hook 'java-mode-hook 'smartparens-mode))
+       :demand t
+       :hook (java-mode . smartparens-mode)
+       :config
+       (require 'smartparens-config)
+       (sp-use-smartparens-bindings))
+
+     (use-package evil-smartparens
+       :ensure t
+       :after (evil smartparens)
+       :demand t
+       :preface
+       (defun my/enable-structural-editing ()
+         "Enable strict Smartparens before Evil integration."
+         (smartparens-strict-mode 1)
+         (evil-smartparens-mode 1))
+       :hook ((clojure-mode . my/enable-structural-editing)
+              (clojurescript-mode . my/enable-structural-editing)
+              (clojurec-mode . my/enable-structural-editing)
+              (edn-mode . my/enable-structural-editing)
+              (cider-repl-mode . my/enable-structural-editing)))
    #+END_SRC
 
-* Cider REPL
-  The defacto REPL hands down. Borrowing from Howard, but not using
-  =slamhound= yet as I have no use case at the moment.
+* CIDER REPL
+  Interactive Clojure development using nREPL.
 
   #+BEGIN_SRC emacs-lisp
-    ;;;;
     (use-package cider
       :ensure t
-      :commands (cider cider-connect cider-jack-in)
+      :commands (cider-jack-in
+                 cider-connect-clj
+                 cider-connect-cljs)
       :init
-      (setq cider-repl-use-clojure-font-lock t
+      (setq cider-repl-history-size 1000
             cider-repl-wrap-history t
-            cider-repl-history-size 1000
-            ;; Stop error buffer from popping up while working in buffers other than the REPL:
-            nrepl-popup-stacktraces nil
-            ;; CIDER likes to try to bind to IPv6 :: but for some reason Java hates it on OpenBSD
-            cider-lein-parameters "repl :headless :host 127.0.0.1")
-      (add-hook 'cider-repl-mode-hook 'paredit-mode))
-    ;;;
+            cider-show-error-buffer nil
+            cider-auto-select-error-buffer nil
+
+            ;; Prefer IPv4 loopback on OpenBSD.
+            cider-host "127.0.0.1"))
   #+END_SRC
