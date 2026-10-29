@@ -4,6 +4,10 @@
 
 Welcome to my Emacs config!
 
+#+BEGIN_SRC emacs-lisp
+;;; init.el --- Emacs configuration -*- lexical-binding: t; -*-
+#+END_SRC
+
 * Introduction
   This file is the entry point for bootstrapping my Emacs system. My
   general approach is to do some general system tweaks before loading
@@ -117,10 +121,27 @@ Welcome to my Emacs config!
    #+BEGIN_SRC emacs-lisp
      (require 'package)
 
-     (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-			      ("melpa" . "http://melpa.org/packages/")))
+     (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                              ("melpa" . "https://melpa.org/packages/")))
      (package-initialize)
-     (package-refresh-contents)
+
+     ;; Conditionally refresh in case we don't want network slowdown.
+     (unless noninteractive
+       (condition-case err
+           (when (member
+                  (downcase
+                   (read-string "Refresh package archives? [y/N] "
+                                nil nil "n"))
+                  '("y" "yes"))
+             (package-refresh-contents))
+         (quit
+          (message "Skipping package refresh"))
+         (error
+          (display-warning
+           'package
+           (format "Package refresh failed: %s"
+                   (error-message-string err))
+           :warning))))
    #+END_SRC
 
 * User Interface
