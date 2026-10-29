@@ -296,12 +296,21 @@ Welcome to my Emacs config!
      ;; just in case
      (require 'ob-tangle)
 
-     (let* ((path (expand-file-name "packages/" user-emacs-directory))
-	    (files (directory-files path t ".*\.org")))
+     (let* ((path (expand-file-name "packages/"
+                                    user-emacs-directory))
+            (files (directory-files path t "\\.org\\'")))
        (dolist (file files)
-	 (progn
-	   (my/log (concat "Loading config file " file))
-	   (org-babel-load-file file))))
+         (condition-case err
+             (progn
+               (my/log (format "Loading config file %s" file))
+               (org-babel-load-file file))
+           (error
+            (display-warning
+             'my/init
+             (format "Failed to load %s: %s"
+                     file
+                     (error-message-string err))
+             :warning)))))
    #+END_SRC
 
 * The Final Countdown
